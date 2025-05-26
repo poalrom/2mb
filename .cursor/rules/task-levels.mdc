@@ -1,0 +1,64 @@
+---
+description: Rule: Task Complexity Level Definitions
+globs: 
+alwaysApply: false
+---
+# Rule: Task Complexity Level Definitions
+
+## 1. Purpose and Scope
+This rule defines the criteria for categorizing development tasks by their complexity level. These definitions are to be used by you, Cursor, to ensure consistent assessment, planning, and processing of tasks, particularly within `PLAN` mode and when discussing task effort or approach. The primary differentiator between levels is the number of architectural decisions required.
+
+## 2. Task Complexity Levels
+
+### Level 1: Simple Task
+* **Core Criteria:**
+    * Requires **zero (0) architectural decisions**.
+    * Represents a task that is straightforward and can be completed quickly by a senior developer, typically within a **maximum of 20-30 minutes** of focused work.
+* **Characteristics:**
+    * Involves minimal code changes, often localized to a few files or a single component.
+    * The path to implementation is clear and unambiguous.
+    * Does not require significant research, exploration of different technical approaches, or introduction of new patterns/libraries.
+    * Usually involves minor UI tweaks, bug fixes with obvious causes and solutions, simple utility functions, or content updates.
+* **Examples:**
+    * "Update the text of a button from 'Save' to 'Submit Changes'."
+    * "Change the primary header color site-wide to a new hex value (e.g., #004B87)."
+    * "Fix a typo in an error message string for invalid email format."
+    * "Add a `data-testid` attribute to several UI elements for testing purposes."
+    * "Rename a local variable within a single function for clarity."
+    * "Adjust CSS padding or margin for a specific UI component by a few pixels."
+
+### Level 2: Task Requiring a Single Architectural Decision
+* **Core Criteria:**
+    * Requires **exactly one (1) architectural decision** to be made before or during its detailed planning and implementation. An architectural decision typically involves choosing between different technical approaches, patterns, libraries, or significant structural changes that have implications beyond a single, isolated component.
+* **Characteristics:**
+    * The task cannot be fully planned or implemented until this single architectural question is resolved.
+    * The decision may involve evaluating trade-offs (e.g., performance vs. complexity, build vs. buy).
+    * Once the decision is made (often documented in an ADR - Architectural Decision Record), the implementation path for that chosen approach might then be straightforward (potentially breaking down into Level 1-like steps).
+* **Examples:**
+    * "Select and integrate a charting library for displaying sales analytics." (Decision: Choose between Chart.js, D3.js, ApexCharts, etc., based on requirements like interactivity, license, ease of use.)
+    * "Decide on a client-side storage mechanism (localStorage vs. IndexedDB) for caching user preferences."
+    * "Choose a specific API rate-limiting strategy (e.g., token bucket vs. leaky bucket) for a public API endpoint."
+    * "Determine the method for handling background processing for a new notification feature: a simple cron job vs. a dedicated message queue worker."
+    * "Select a primary data validation library for incoming API request payloads (e.g., Joi, Zod, or built-in framework validation)."
+
+### Level 3: Complex Task Requiring Multiple Architectural Decisions
+* **Core Criteria:**
+    * Requires **more than one (1) distinct architectural decision** to be made. These decisions often interrelate and define significant aspects of a new feature or system component.
+* **Characteristics:**
+    * Represents a larger feature, epic, or a task with substantial scope and complexity.
+    * Typically needs to be broken down into several sub-tasks, where each sub-task might itself be of Level 1 or Level 2, or require its own specific ADR after the higher-level ADRs are made.
+    * Involves designing or significantly altering a non-trivial part of the system.
+* **Examples:**
+    * "Implement a complete user registration and authentication system with email verification and password recovery." (Decisions: OAuth2 vs. custom JWT; password hashing algorithm; email service integration; session management strategy; MFA options if any.)
+    * "Develop a new 'Project Management' module within an existing application, including features for task creation, assignment, and progress tracking." (Decisions: Data model for projects/tasks; real-time collaboration approach; notification system design; user roles and permissions within the module.)
+    * "Integrate a third-party payment gateway (e.g., Stripe, PayPal) to enable online subscriptions." (Decisions: Specific API integration strategy; handling webhooks and payment states; data model for subscriptions and payments; security considerations for handling payment information.)
+    * "Design and build a recommendation engine for products on an e-commerce site." (Decisions: Algorithm choice (collaborative filtering, content-based, hybrid); data pipeline for user behavior and product features; batch vs. real-time model updates; API design for serving recommendations.)
+    * "Refactor a core legacy component to improve performance and maintainability by introducing a new design pattern and separating concerns." (Decisions: Choice of design pattern(s); strategy for phased rollout/migration if applicable; defining new interfaces and service boundaries; data migration approach if schema changes.)
+
+## 3. Application
+You are to use these definitions when:
+* Evaluating tasks provided by the user in `PLAN` mode.
+* Assessing the complexity of implementing a solution derived from an ADR in `CREATIVE` mode.
+* Any other situation requiring a standardized understanding of task complexity.
+
+If uncertain about a task's level after initial assessment, you should ask clarifying questions to the user, referencing these definitions to help pinpoint the correct level.

@@ -17,7 +17,7 @@ The Memory Bank **MUST** adhere to the following file and directory structure. T
 * `./memory-bank/project_brief.md`: Contains the fundamental idea and core functionality of the project.
     * **Restriction**: You **MUST NOT** directly modify this file. If changes are needed, you **MUST** ask the user to make them.
 * `./memory-bank/tech/`: A subdirectory for technical details and implementation guidelines.
-    * `./memory-bank/tech/index.md`: The main file detailing the project's technical stack, technical requirements, restrictions, and style guides, potentially linking to specific guidelines or other relevant documents within this subdirectory. You **MUST** always read it before changing code. You **CAN** modify this file as needed.
+    * `./memory-bank/tech/index.md`: The main file detailing the project's technical stack, technical requirements, restrictions, and style guides, potentially linking to specific guidelines or other relevant documents within this subdirectory. It contains a section "Common guidelines" which includes links to different coding standards in separated files. You **MUST** always read it before changing code. You **CAN** modify this file as needed.
 * `./memory-bank/architecture/`: A subdirectory for architectural information.
     * `./memory-bank/architecture/index.md`: The main file describing the project's architecture, potentially linking to Architectural Decision Records (ADRs) or other relevant documents within this subdirectory. You **CAN** modify this file as needed. When you do this you **MUST** read `./.cursor/rules/adr-structure.mdc` first.
 * `./memory-bank/project_plan.md`: Describes the current project development plan, including completed tasks and upcoming tasks. You **CAN** modify this file as needed.
