@@ -1,0 +1,190 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Mode Rule: CREATIVE
+
+## 1. Objective
+When in `CREATIVE` mode, your primary objectives are:
+1.  To analyze the task in `current_task.md` and determine if architectural decisions are pending.
+2.  If decisions are needed, to systematically explore various potential solutions, involving simulated expert perspectives (akin to a Tree of Thoughts approach).
+3.  To guide the user in selecting the optimal solution, especially when trade-offs exist.
+4.  To meticulously document the final decision as an Architectural Decision Record (ADR) and update relevant technology documentation.
+5.  **To then assess the complexity of implementing the chosen solution/ADR.**
+6.  Based on this assessment, either to update `current_task.md` with precise, actionable steps (for simple implementations) or to prepare the task for further breakdown in `PLAN` mode or further decisions in `ADR`/`CREATIVE` mode if the implementation itself is complex.
+This mode focuses on analysis, decision-making, documentation, and subsequent implementation complexity assessment.
+
+## 2. CRITICAL RESTRICTION: NO CODE MODIFICATION
+**IMPORTANT:** Under absolutely no circumstances are you to create, edit, delete, or otherwise modify any source code files (e.g., `.js`, `.py`, `.java`, `.html`, `.css`, etc.), project configuration files (outside of the `./memory-bank/` directory), build scripts, or any other operational project files when you are in `CREATIVE` mode.
+
+Your activities in `CREATIVE` mode are **strictly limited** to:
+* Reading `current_task.md` and other Memory Bank files for context.
+* Interacting with the user (asking questions, presenting options, seeking decisions).
+* Generating and exploring potential solutions conceptually.
+* Writing and updating documentation **only** within the `./memory-bank/` directory (specifically ADRs in `architecture/`, updates to `tech/` files, updates to `architecture/index.md` and `tech/index.md`, and updates to `current_task.md`).
+
+Any direct changes or operations on the project's codebase are forbidden in this mode.
+
+## 3. Primary Outputs
+* New ADR files in `./memory-bank/architecture/`.
+* Updates to `./memory-bank/architecture/index.md`.
+* Updates to `./memory-bank/tech/index.md` (and potentially new linked files in `./memory-bank/tech/` if significant new technologies are introduced).
+* An updated `./memory-bank/current_task.md` with detailed implementation steps and links to the ADR.
+
+## 4. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start CREATIVE Mode] --> B{Read current_task.md};
+    B --> C{Architectural Decision Needed for Current Task?};
+    C -- No --> D["Inform User: "No outstanding architectural decisions found.""];
+    D --> D1[Suggest User Run IMPLEMENT Mode];
+    D1 --> Z[End CREATIVE Mode for this task];
+    C -- Yes --> E["Initiate Solution Exploration (ToT with Simulated Experts)"];
+    E --> F{Trade-offs Identified?};
+    F -- Yes --> G[Present Trade-offs to User & Get Preference];
+    G --> H[Final Decision Made];
+    F -- No --> H;
+    H --> I[Document Decision: Create ADR, Update architecture/index.md];
+    I --> J{New Libraries/Technologies Introduced?};
+    J -- Yes --> J1["Update tech/index.md (or related tech files)"];
+    J -- No --> K_Eval;
+    J1 --> K_Eval;
+
+    K_Eval["Assess Complexity of Implementing ADR (L1/L2/L3 via PLAN mode criteria)"];
+    K_Eval --> L_Confident{Confident in Level?};
+    L_Confident -- No --> L_Clarify[Ask user clarifying questions for implementation assessment];
+    L_Clarify --> K_Eval;
+    L_Confident -- Yes --> M_HandleLevel{Implementation Complexity?};
+
+    M_HandleLevel -- Level 1 --> N1[Update current_task.md with detailed L1 steps to implement ADR. Add links to ADR/Tech Docs.];
+    N1 --> B;
+
+    M_HandleLevel -- Level 2 --> N2["Task 'Implement ADR-XYZ' is L2. Update current_task.md for this L2 task. Update project_plan.md if needed to track."];
+    N2 --> O2["Suggest User Run ADR Mode (or CREATIVE again if broader exploration needed for implementation). End CREATIVE for this cycle."];
+
+    M_HandleLevel -- Level 3 --> N3["Task 'Implement ADR-XYZ' is L3. Update project_plan.md to add/track 'Implement ADR-XYZ [L3]'. Clear/Update current_task.md."];
+    N3 --> O3["Suggest User Run PLAN Mode to break down 'Implement ADR-XYZ [L3]'. End CREATIVE for this cycle."];
+
+    O2 --> Z;
+    O3 --> Z;
+```
+
+## 5. Workflow and Operational Steps (Detailed)
+
+### Step 1: Assess `current_task.md`
+1.  **Read and Analyze `current_task.md`:** Carefully review the content of `./memory-bank/current_task.md`.
+2.  **Determine if Architectural Decisions are Needed:**
+    * Look for explicit statements in the task description indicating a decision is pending.
+    * Analyze if the task describes a problem or goal that inherently requires choosing between different technical approaches, patterns, new technologies, or significant structural changes.
+    * A task likely requires an architectural decision if it lacks precise implementation steps and instead poses questions like "how should we implement X?", "what's the best way to achieve Y?", or describes a feature with multiple possible designs.
+    * If `current_task.md` already references a specific ADR for this task and contains detailed implementation steps, then architectural decisions are likely already made.
+3.  **Branch Based on Assessment:**
+    * **If NO clear architectural decision is pending** (e.g., the task is well-defined with steps, or an ADR is already referenced and sufficient):
+        1. Inform the user: "Based on `current_task.md`, it appears no further architectural decisions are required for '[Task Name]'."
+        2. Suggest: "You can likely proceed with **IMPLEMENT** mode."
+        3. Conclude CREATIVE mode operations for this task.
+    * **If YES, an architectural decision is needed:**
+        1. Inform the user: "The task '[Task Name]' requires some architectural decisions... I will now explore potential solutions."
+        2. Proceed to Step 2.
+### Step 2: Solution Exploration and Decision Making
+1.  **Employ Tree of Thoughts (ToT) with Simulated Experts:**
+    * Your goal is to systematically explore and evaluate multiple viable solutions for the architectural problem identified in `current_task.md`.
+    * **Generate Potential Solutions:** Identify at least 2-3 distinct high-level approaches or solutions.
+    * **Simulate Expert Analysis for Each Solution:** For each potential solution, consider it from the perspectives of different software development 'experts'. You should articulate these perspectives. Examples:
+        * **'Senior Architect' Persona:** Considers overall system fit, scalability, long-term impact, alignment with existing architecture.
+        * **'Security Specialist' Persona:** Evaluates security vulnerabilities, data protection, compliance.
+        * **'Performance Engineer' Persona:** Assesses potential impact on speed, resource usage, responsiveness.
+        * **'Maintainability Advocate' Persona:** Considers complexity, testability, ease of understanding, future modifications.
+        * **'User Experience (UX) SME' Persona:** (If applicable) Considers impact on the end-user.
+    * **Document Pros, Cons, Risks, and Mitigations:** For each solution, based on the expert perspectives, clearly list its advantages, disadvantages, potential risks, and any mitigation strategies.
+2.  **Identify the Best Decision / Handle Trade-offs:**
+    * Based on the multi-expert analysis, try to identify a recommended "best" solution.
+    * **If clear trade-offs exist** between promising solutions, or if the "best" choice is context-dependent:
+        1.  Summarize the top 2-3 solutions, highlighting their key trade-offs (e.g., "Solution A is faster but more complex to implement; Solution B is simpler but might not scale as well for very large datasets.").
+        2.  Present these options and trade-offs clearly to the user.
+        3.  Ask the user for their preference or guiding input: "Given these trade-offs for '[Task Name]', which approach do you prefer, or what are your priorities here (e.g., speed over simplicity, short-term vs. long-term maintainability)?"
+    * The "Final Decision" is the one identified as best by the ToT analysis, or the one chosen/guided by the user if trade-offs were presented.
+
+### Step 3: Documenting the Final Decision
+1.  **Create an Architectural Decision Record (ADR):**
+    * Based on the Final Decision from Step 2.
+    * Create a new ADR file in the `./memory-bank/architecture/` directory.
+    * **ADR Naming:** Use a consistent naming convention, e.g., `ADR-NNN-brief-title.md` (where NNN is a sequential number). Ask the user for a short descriptive title if needed, or derive it from the task.
+    * **ADR Content:** The ADR should at least include:
+        * **Title:** Descriptive title of the decision.
+        * **Status:** (e.g., "Proposed", "Accepted", "Superseded"). Mark as "Accepted".
+        * **Context:** Briefly describe the problem or task from `current_task.md` that led to this decision.
+        * **Decision:** Clearly state the chosen solution or approach.
+        * **Rationale/Justification:** Explain why this decision was made. Summarize the key arguments, pros of the chosen solution, and why alternatives were discarded (referencing the ToT/expert analysis is good).
+        * **Consequences:** Outline the expected outcomes, impacts (positive and negative), and any new risks or dependencies introduced by this decision.
+2.  **Update `architecture/index.md`:**
+    * Append a new entry to `./memory-bank/architecture/index.md` listing the newly created ADR with its title and a link to the file.
+3.  **Document New Technologies/Libraries (if applicable):**
+    * If the Final Decision involves introducing new libraries, frameworks, tools, or significant changes to the tech stack:
+        1.  Detail this information in an appropriate manner. This might involve:
+            * Adding a new section to `./memory-bank/tech/index.md`.
+            * Creating a new dedicated file in `./memory-bank/tech/` (e.g., `new_library_guidelines.md`) if the information is extensive.
+        2.  If a new file is created, ensure `./memory-bank/tech/index.md` is updated to link to or summarize this new technology information.
+        3.  Clearly state the chosen libraries/versions and the rationale for their selection as part of this decision.
+
+### Step 4: Assess Complexity of Implementing the ADR
+1.  **Check existing ADRs:** List files in `./memory-bank/architecture` and check what the next number for XYZ in the name of ADR should be
+2.  **Define the Implementation Task:** Conceptually frame a new task: "Implement the solution described in ADR-XYZ" (where ADR-XYZ is the ADR just created).
+3.  **Evaluate Complexity:** Using the **same complexity level definitions (Level 1, Level 2, Level 3) as defined in `PLAN` mode's rules**, assess this "Implement ADR-XYZ" task.
+    * Briefly review the ADR and consider what's involved in its actual implementation.
+4.  **Confidence in Assessment:** You must be highly confident in this complexity level assessment for the implementation. If unsure (e.g., the ADR is very high-level and implementation scope is still vague):
+    * Ask the user clarifying questions specifically about the *implementation* of the ADR:
+        * "Now that we've decided on the approach in ADR-XYZ, what do you foresee as the major steps or challenges in implementing it?"
+        * "Roughly how long might the implementation of this ADR take for a senior developer?"
+        * "Will implementing ADR-XYZ require further significant decisions or just straightforward execution?"
+    * Continue until you can confidently assign a Level 1, 2, or 3 to the task of "Implement ADR-XYZ".
+5.  Announce the assessed complexity for implementation: "I've assessed the task of implementing the solution from ADR-XYZ as a Level [1/2/3] effort."
+
+### Step 5: Handle Based on Implementation Complexity
+
+#### 5.A. If "Implement ADR-XYZ" is Assessed as Level 1:
+1.  **Update `current_task.md` with Detailed Steps:**
+    * Modify `./memory-bank/current_task.md` for the original task that led to the ADR.
+    * The file **MUST** now include:
+        * A clear reference to the newly created ADR (e.g., "Architectural Approach: See ADR: [Link to ./memory-bank/architecture/ADR-file.md]").
+        * A precise, ordered list of **actionable implementation steps** required to complete the task according to the ADR. These steps should be suitable for `IMPLEMENT` mode.
+        * Links to any relevant new tech documentation created/updated in Step 3.
+        * Ensure the part of the task description that indicated an architectural decision was pending is now resolved.
+2.  **Proceed to Step 6 (Loop / Re-assess).**
+
+#### 5.B. If "Implement ADR-XYZ" is Assessed as Level 2:
+1.  **Update Memory Bank for Handoff:**
+    * **`project_plan.md` (Optional but Recommended):** Consider if "Implement ADR-XYZ [L2]" should be added as a trackable item in `project_plan.md`, especially if the original task was broad. Discuss with the user if unsure.
+    * **`current_task.md`:** Update `./memory-bank/current_task.md`. Its content should now be focused on the task "Implement ADR-XYZ." Include:
+        * A clear title: "Implement ADR-XYZ: [Original Task Name/Context]".
+        * A summary of the goal (to implement the ADR).
+        * A clear link to ADR-XYZ.
+        * A statement that this implementation phase itself requires further focused decision-making (as it's Level 2).
+        * **Do NOT** include detailed implementation steps yet.
+2.  **Inform and Suggest Next Mode:**
+    * "The decision is documented in ADR-XYZ. Implementing this solution (Task: 'Implement ADR-XYZ') is assessed as a Level 2 effort, likely requiring further specific decisions or detailed component design."
+    * "I recommend running **ADR** mode (or **CREATIVE** mode again if a broader exploration for this implementation sub-problem is needed) for the task 'Implement ADR-XYZ'."
+3.  **Conclude CREATIVE mode operations for this cycle.**
+
+#### 5.C. If "Implement ADR-XYZ" is Assessed as Level 3:
+1.  **Update Memory Bank for Handoff:**
+    * **`project_plan.md`:** This is crucial. Add "Implement ADR-XYZ" as a new, distinct Level 3 task in `./memory-bank/project_plan.md`. Include:
+        * A descriptive title, e.g., "- [ ] Implement solution from ADR-XYZ (for [Original Task Name]) [L3]".
+        * A link to ADR-XYZ.
+        * Its status as "ToDo" or "Planning."
+    * **`current_task.md`:** You may clear `current_task.md` or update its context to reflect that the next action is to plan the new L3 task from `project_plan.md`. Example: "Next up for planning: Implement solution from ADR-XYZ [L3]."
+2.  **Inform and Suggest Next Mode:**
+    * "The decision is documented in ADR-XYZ. Implementing this solution is a significant effort, assessed as a Level 3 task ('Implement ADR-XYZ')."
+    * "This Level 3 task needs to be broken down further. I recommend running **PLAN** mode next to detail and split the task 'Implement ADR-XYZ'."
+3.  **Conclude CREATIVE mode operations for this cycle.**
+
+### Step 6: Loop / Re-assess `current_task.md` (Only if Implementation was Level 1)
+1.  This step is only reached if the implementation of the ADR was assessed as Level 1 in Step 5.A.
+2.  Announce: "The architectural decision for '[Original Task Name]' has been documented, and `current_task.md` has been updated with detailed Level 1 implementation steps. Re-assessing task status."
+3.  Return to **Step 1** of this `CREATIVE` mode workflow (Read and Analyze `current_task.md`).
+    * `current_task.md` now contains an ADR reference and detailed steps. The condition in Step 1.3 ("If NO clear architectural decision is pending") should now be met, leading to the suggestion of `IMPLEMENT` mode and the conclusion of CREATIVE mode for this task.
+## 7. Considerations
+* If the user disagrees with the simulated expert analysis or proposed solutions, prioritize their input for the final decision.
+* Ensure ADRs are written clearly and provide enough context for someone unfamiliar with the immediate discussion to understand the decision.

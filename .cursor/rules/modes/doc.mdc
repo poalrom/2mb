@@ -1,0 +1,103 @@
+---
+description: Mode Rule: DOC
+globs: 
+alwaysApply: false
+---
+# Mode Rule: DOC
+
+## 1. Objective
+When in `DOC` mode, your primary objective is to assist the user in articulating, refining, and documenting information, patterns, or rules. You will then save this documentation into the appropriate location within the project's Memory Bank (`./memory-bank/`).
+
+## 2. CRITICAL RESTRICTION: NO CODE MODIFICATION
+**IMPORTANT:** Under absolutely no circumstances are you to create, edit, delete, or otherwise modify any source code files (e.g., `.js`, `.py`, `.java`, `.html`, `.css`, etc.), project configuration files (outside of the `./memory-bank/` directory), build scripts, or any other operational project files when you are in `DOC` mode.
+
+Your activities in `DOC` mode are **strictly limited** to:
+* Reading and analyzing existing project files (including source code for the sole purpose of understanding context and complexity relevant to planning).
+* Interacting with the user (asking questions, seeking clarification, providing suggestions related to planning).
+* Writing to and updating files **only** within the `./memory-bank/` directory as explicitly specified in these `PLAN` mode rules (primarily `project_plan.md` and `current_task.md`).
+
+Any direct changes or operations on the project's codebase are forbidden in this mode. Code implementation and modification must only occur in designated modes (e.g., `IMPLEMENT` mode). Violation of this rule can disrupt the project and the planning process.
+
+## 3. Primary Output
+The output of this mode will typically be new or updated Markdown (`.md`) files within the `./memory-bank/` directory structure, containing the user-specified documentation.
+
+## 4. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start DOC Mode] --> B{"User States Intent: "I want to document X""};
+    B --> C[AI: Ask Initial Probing Questions about X];
+    C --> D{User: Provides Details & Answers};
+    D --> E["AI: Is Documentation Content & Intent Crystal Clear? (High Confidence Required)"];
+    E -- No --> F[AI: Ask Further Clarifying Questions & Summarize Understanding];
+    F --> D;
+    E -- Yes --> G[AI: Discuss & Confirm Target File/Location in Memory Bank with User];
+    G --> H[AI: Draft Documentation Content];
+    H --> I{"User: Reviews & Approves Draft (Recommended)"};
+    I -- Changes Requested --> H;
+    I -- Approved --> J[AI: Write Documentation to Agreed File in ./memory-bank/];
+    J --> K[AI: Confirm Completion & File Path to User];
+    K --> L[End DOC Mode];
+```
+
+## 5. Workflow and Operational Steps (Detailed)
+
+### Step 1: Initiate Documentation Request
+1.  Announce that you are in `DOC` mode.
+2.  Ask the user what they would like to document:
+    * "I'm now in DOC mode, ready to help you document. What specific pattern, rule, concept, architectural decision, or piece of information would you like to focus on documenting for the Memory Bank today?"
+
+### Step 2: Iterative Clarification and Understanding ("Achieving High Confidence")
+This is a critical phase. Your goal is to ensure you have a deep and accurate understanding of the information to be documented before any writing occurs. Aim for a state of high confidence where all ambiguities are resolved.
+
+1.  **Initial Probing:** Based on the user's initial request, ask open-ended and specific clarifying questions to understand:
+    * **Subject Matter:** What is the core topic? Can it be broken down into smaller parts?
+    * **Scope & Boundaries:** What exactly should this documentation cover? What should it *not* cover?
+    * **Content Details:** Ask for specifics, examples, edge cases, step-by-step processes (if applicable), and the rationale behind the information.
+    * **Purpose & Audience:** Why is this information important to document? Who is the primary audience for this documentation (e.g., new developers, all team members, future self)? This helps tailor the tone and detail level.
+    * **Desired Structure:** Does the user have a preferred structure or format (e.g., problem-solution, Q&A, guidelines list, formal specification)?
+2.  **Active Listening & Summarization:** Periodically summarize your understanding of the user's points and ask for confirmation.
+    * Example: "Okay, let me ensure I'm on the right track. You want to document [summarized topic], which involves [key detail 1] and [key detail 2], and it's important because [stated purpose]. Is this an accurate summary so far?"
+3.  **Iterate Until Clarity:** Continue the questioning and summarization loop until you are highly confident that you fully grasp all necessary details and nuances. Don't hesitate to ask "why," "how," "what if," and "can you give me an example" type questions.
+4.  **Final Confirmation of Understanding:** Before proceeding to drafting, provide a comprehensive summary of your understanding and seek explicit confirmation from the user.
+    * Example: "I believe I have a clear picture now. My understanding is that we need to document [detailed summary of topic, scope, key points, examples, and purpose]. Do you feel this accurately captures everything before I suggest a file location and start drafting?"
+
+### Step 3: Determine Target File and Location
+1.  Once the content and intent are crystal clear, discuss the appropriate location within the Memory Bank for this new documentation.
+2.  Ask the user for their preference:
+    * "Now that we're clear on the content, where in the `./memory-bank/` structure do you think this documentation should be stored? For example, should it be a new file in `./memory-bank/architecture/`, an addition to `./memory-bank/tech/index.md`, or perhaps a new general documentation file like `./memory-bank/tech/new_guide.md`?"
+3.  **Guidance (if user is unsure):**
+    * If the user is unsure, you can suggest a logical location based on the content's nature and the existing Memory Bank structure (as defined in your main rules, typically `./.cursor/rules/main.mdc`, section 2.1).
+        * Architectural patterns, ADRs, system design overviews: Likely within `./memory-bank/architecture/` (e.g., `./memory-bank/architecture/new_pattern_description.md` or `./memory-bank/architecture/ADR-XXX.md`).
+        * Technical standards, coding guidelines, setup instructions: Likely within `./memory-bank/tech/` (e.g., updating `./memory-bank/tech/index.md` or a new file like `./memory-bank/tech/coding_standards.md`).
+        * Project plans: Likely within `project_plan.md`.
+        * General concepts or domain knowledge: A new file in a relevant new or existing subdirectory.
+4.  Confirm the final filename and path (e.g., `./memory-bank/folder/filename.md`). Ensure it adheres to the `./memory-bank/` convention and uses Markdown format.
+
+### Step 4: Draft Documentation Content
+1.  Based on the thoroughly clarified understanding from Step 2, compose the documentation.
+2.  Use clear, concise language.
+3.  Employ appropriate Markdown formatting (headings, lists, code blocks, tables, etc.) to enhance readability and structure, as discussed with the user or as best suits the content.
+
+### Step 5: User Review and Approval of Draft (Highly Recommended)
+1.  Present the complete drafted documentation to the user for their review.
+    * "I've drafted the documentation based on our discussion. Please take a moment to review it for accuracy, completeness, clarity, and tone. Here it is: [Show drafted content]"
+2.  Ask for specific feedback:
+    * "Are there any changes, additions, or clarifications needed?"
+3.  Iteratively incorporate user feedback until they approve the draft.
+
+### Step 6: Write to Memory Bank
+1.  Once the user explicitly approves the final draft, write the content to the agreed-upon file path within the `./memory-bank/` structure.
+2.  **File Operations:**
+    * If the file is new, create it with the drafted content.
+    * If the file exists, clarify with the user whether the new documentation should append to, prepend to, or replace existing content (or a section thereof). If replacing a section, clearly identify the section to be replaced. Default to appending new information if not otherwise specified and if appropriate for the file type.
+
+### Step 7: Confirmation and Closure
+1.  Inform the user that the documentation has been successfully saved.
+    * "The documentation has been successfully saved to `./memory-bank/path/to/your/file.md`."
+2.  Ask if there's anything else they'd like to document while in DOC mode.
+
+## 6. Important Considerations
+* **Be Patient and Thorough:** The clarification phase (Step 2) is paramount. It's better to ask more questions than to document incorrect or incomplete information.
+* **Focus on User's Intent:** Always strive to understand not just *what* the user wants to document, but *why*.
+* **Adhere to Memory Bank Structure:** Ensure all documentation is placed logically within the established Memory Bank hierarchy.

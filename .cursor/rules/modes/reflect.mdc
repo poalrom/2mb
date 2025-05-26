@@ -1,0 +1,119 @@
+---
+description: Mode Rule: REFLECT
+globs: 
+alwaysApply: false
+---
+# Mode Rule: REFLECT
+
+## 1. Objective
+When in `REFLECT` mode, your primary objective is to analyze your past interactions (current and attached dialogues) to:
+1.  Identify mistakes you made or areas where your understanding/approach was suboptimal.
+2.  Understand how the user guided you to corrections or better methods.
+3.  With explicit user guidance and approval, translate these learnings into proposals for new or updated **guidelines** within the `./memory-bank/tech/` folder structure.
+This mode aims to improve the project's documented best practices and your operational understanding by learning from direct experience and user feedback.
+
+## 2. CRITICAL RESTRICTIONS
+1.  **READ-ONLY FOR PROJECT CODE:** You **MUST NOT** make any changes to the project's source code, configuration files (outside the memory bank), or any operational files.
+2.  **USER-DRIVEN GUIDELINE MODIFICATION:** You **MUST NOT** create new guideline files or modify any existing guideline documents (including `./memory-bank/tech/index.md` or files linked therein) without:
+    * Explicit confirmation from the user on which learnings should become guidelines.
+    * Explicit user approval of the exact proposed wording and placement of any new or modified guideline text.
+    * Direct instruction from the user to proceed with the file modification.
+3.  **FOCUS ON GENERALIZABLE GUIDELINES:** Learnings should be formulated as generally applicable guidelines or clarifications, not just records of specific past mistakes.
+
+## 3. Primary Outputs
+* Potentially new Markdown guideline files within the `./memory-bank/tech/` directory (e.g., `./memory-bank/tech/new_coding_standard_clarification.md`).
+* Potential modifications to existing guideline files within `./memory-bank/tech/`.
+* Necessary updates to `./memory-bank/tech/index.md` to list or link new guideline files or reflect significant updates.
+
+## 4. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start REFLECT Mode] --> B{Access & Analyze Current and Attached/Relevant Past Dialogues};
+    B --> C[Identify Own Mistakes/Inefficiencies & User's Corrective Guidance];
+    C --> D{Significant Learning Opportunities Identified for Guideline Improvement?};
+    D -- No --> E["Inform User: "No specific learnings identified that suggest new/updated guidelines in this session.""];
+    E --> K[End REFLECT Mode];
+    D -- Yes --> F[Present Summary: <br/>1. Initial Situation/My Approach <br/>2. User's Corrective Input <br/>3. Proposed Guideline Insight];
+    F --> G{User Reviews & Selects Insights for Guideline Documentation};
+    G -- None Selected --> E;
+    G -- Some Selected --> H["For Each Selected Insight: <br/>1. Discuss if New Guideline or Update to Existing <br/>2. Agree on Target File(s) in ./memory-bank/tech/ <br/>3. AI Drafts Guideline Text"];
+    H --> I{User Reviews & Approves Exact Wording and Placement of Guideline Text};
+    I -- Needs Revision --> H;
+    I -- Approved --> J["Write/Update Guideline File(s) in ./memory-bank/tech/ & Update ./memory-bank/tech/index.md if needed"];
+    J --> K;
+```
+
+## 5. Workflow and Operational Steps (Detailed)
+
+### Step 1: Define Scope and Access Dialogues
+1.  **Announce Mode:** "Now in REFLECT mode. I will analyze our recent interactions to identify potential improvements or clarifications for project guidelines based on my experiences."
+2.  **Dialogue Scope:** 
+    * Focus on the **current dialogue session**.
+    * If there's a mechanism to access or if you are aware of "attached" or directly preceding related dialogues (e.g., for the same task or feature), include those in your analysis. Clarify with the user if the scope of "attached dialogues" is ambiguous: "To make this reflection effective, I will review our current conversation. Are there other specific recent dialogues related to this task/topic I should also include in my analysis?"
+3.  **Goal of Analysis:** Remind yourself that the goal is to derive generalizable insights from specific interactions that could benefit the project's documented guidelines.
+
+### Step 2: Identify Mistakes and Analyze User's Corrective Guidance to Extract Potential Guideline Insights
+1.  **Review Dialogues Critically:** 
+    * **Misinterpretations**: Instances where you misunderstood the user's request or intent.
+    * **Incorrect Actions**: Code you generated that was flawed, suggestions you made that were off-target, or steps you took that were inefficient or incorrect.
+    * **Guideline Violations**: If you failed to follow a guideline from the Memory Bank or your own rules, and the user (or a later self-correction) pointed this out.
+    * **Inefficiencies**: Situations where the user guided you to a much simpler or more effective way to achieve a goal you were struggling with.
+    * **Communication Issues**: Vague responses you gave that required the user to ask for excessive clarification.
+2.  **Analyze User's Fixes/Guidance:** 
+    * Identify the specific prompts, instructions, examples, or explanations the user provided that helped correct your course or understanding.
+    * Note the *pattern* of their correction. Did they provide a direct command? An example? A counter-example? Did they rephrase? Did they point to a specific rule or document?
+3.  **Formulate Potential Guideline Insights:** For each mistake-and-correction pair, transform the "lesson learned" into a potential *guideline statement* or a *clarification for an existing guideline*.
+    * **Focus:** How can this learning help anyone (including your future self or other developers) avoid similar issues or perform better according to project standards?
+    * Example Insight: Instead of "I learned to ask X," formulate as "Proposal: Clarify in [Guideline Y] that when dealing with [Scenario Z], specific question X should be asked to ensure clarity." Or, "Proposal: New guideline for 'Handling Asynchronous UI Updates' should include pattern P, as it proved more robust than pattern Q in [situation]."
+
+### Step 3: User Consultation and Selection of Insights for Guideline Documentation
+1.  **Summarize Potential Guideline Insights:** If you've identified insights that could become new guidelines or updates to existing ones, present them to the user.
+    * Structure each item clearly:
+        * **Situation/My Initial Action:** Briefly describe the context.
+        * **User's Guidance/Correction:** How the user helped.
+        * **Proposed Guideline Insight/Contribution:** The generalizable point that could become a guideline. (e.g., "A best practice for [topic] seems to be [action], to avoid [problem].")
+2.  **Request User Selection:** Ask the user which of these proposed insights they believe are valuable enough to be formalized as project guidelines.
+    * "I've identified some insights from our interactions that might be useful for improving or adding to our project guidelines in `./memory-bank/tech/`. Would you like me to list them so you can decide which, if any, should be pursued for documentation?"
+    * If they agree, list your summarized insights. Then ask: "Which of these proposals, if any, do you think should be developed into a new guideline or an update to an existing one?"
+
+### Step 4: Formulate and Refine Guideline Text with User
+For each insight selected by the user in Step 3:
+1.  **Discuss Nature of Guideline:**
+    * Ask the user: "For the insight regarding '[summarized insight]', should this be:
+        * a) A new, standalone guideline document within `./memory-bank/tech/`?
+        * b) An addition or modification to an existing guideline document in `./memory-bank/tech/`? (If so, which one?)"
+2.  **Identify Target File(s):**
+    * Based on the user's direction, confirm the target file(s).
+    * If it's a new guideline document, agree on a descriptive filename (e.g., `./memory-bank/tech/new_guideline_on_x.md`).
+    * If it's an update to an existing file, identify the exact file and, if possible, the section to be modified.
+3.  **Draft Guideline Wording:**
+    * Collaboratively (with you proposing and user refining, or user dictating) draft the exact text for the new guideline or the amendment to an existing one.
+    * **Crucially, the text MUST be phrased as a guideline for the project, not as a personal reflection.**
+    * Example of good guideline phrasing:
+        * "When implementing [feature type], ensure [specific consideration] is addressed to prevent [potential issue]."
+        * "Best Practice for [technology/pattern]: Always [perform action X] because [rationale Y]."
+        * "Clarification to Guideline [Z.Y.X]: This guideline also implies that..."
+4.  **User Approval of Final Text and Placement:**
+    * Present the final drafted guideline text and its intended location (new file or specific place in existing file).
+    * **Obtain explicit approval from the user for this exact text and placement before proceeding to write any files.** "Is this wording and placement for the guideline correct and approved for inclusion in `./memory-bank/tech/`?"
+
+### Step 5: Documenting the Approved Guideline(s)
+1.  Once the user has given explicit approval for the exact wording and placement:
+2.  **Write to Guideline File(s):**
+    * If creating a new guideline file: Create the file (e.g., `./memory-bank/tech/new_guideline_on_x.md`) with the approved content.
+    * If modifying an existing guideline file: Carefully make the approved changes to that file.
+3.  **Update `tech/index.md` (if necessary):**
+    * If a new guideline file was created, you **MUST** update `./memory-bank/tech/index.md` to include a reference (e.g., a link and brief description) to this new guideline document under the appropriate section.
+    * If an existing guideline was significantly altered, check if its summary or listing in `tech/index.md` also needs a minor update.
+4.  **Confirmation:** "I have documented the new/updated guideline regarding '[topic of guideline]' in `./memory-bank/tech/[filename].md` (and updated `tech/index.md` if applicable) as per your approval."
+
+### Step 6: Conclude Reflection
+1.  Ask if the user has any other reflections or feedback.
+2.  "Exiting REFLECT mode."
+
+## 6. Considerations
+* **Responsibility:** Modifying project guidelines is a significant action. Ensure utmost care and always wait for explicit user approval on the final text and placement.
+* **Clarity and Conciseness:** Guidelines should be clear, concise, and actionable.
+* **Generalizability:** Ensure the documented output is a genuine guideline applicable beyond the single instance that triggered the reflection.
+* **User as Final Authority:** The user is the ultimate authority on what constitutes a project guideline and how it should be worded and stored.

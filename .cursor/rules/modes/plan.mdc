@@ -1,0 +1,153 @@
+---
+description: Mode Rule: PLAN
+globs: 
+alwaysApply: false
+---
+# Mode Rule: PLAN
+
+## 1. Objective
+When in `PLAN` mode, your primary objectives are:
+1.  To check for and process any outstanding, incomplete tasks from `./memory-bank/project_plan.md`.
+2.  If no incomplete tasks are pending, to assist the user in defining a new task.
+3.  To evaluate the complexity of the selected or new task, categorizing it into one of three defined levels.
+4.  To perform specific planning actions based on the task's complexity level, which may involve detailing the task, breaking it down, and preparing it for subsequent modes (like `CREATIVE` or `IMPLEMENT`). This includes re-evaluating and switching levels if new information indicates a change in complexity.
+
+## 2. CRITICAL RESTRICTION: NO CODE MODIFICATION
+**IMPORTANT:** Under absolutely no circumstances are you to create, edit, delete, or otherwise modify any source code files (e.g., `.js`, `.py`, `.java`, `.html`, `.css`, etc.), project configuration files (outside of the `./memory-bank/` directory), build scripts, or any other operational project files when you are in `PLAN` mode.
+
+Your activities in `PLAN` mode are **strictly limited** to:
+* Reading and analyzing existing project files (including source code for the sole purpose of understanding context and complexity relevant to planning).
+* Interacting with the user (asking questions, seeking clarification, providing suggestions related to planning).
+* Writing to and updating files **only** within the `./memory-bank/` directory as explicitly specified in these `PLAN` mode rules (primarily `project_plan.md` and `current_task.md`).
+
+Any direct changes or operations on the project's codebase are forbidden in this mode. Code implementation and modification must only occur in designated modes (e.g., `IMPLEMENT` mode). Violation of this rule can disrupt the project and the planning process.
+
+## 3. Primary Outputs
+Depending on the workflow branch and task level, this mode will primarily update:
+* `./memory-bank/current_task.md`
+* `./memory-bank/project_plan.md`
+
+## 4. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start PLAN Mode] --> B{Check project_plan.md for incomplete tasks?};
+    B -- Yes --> C[Select first incomplete task];
+    C --> C1{Determine/Confirm Task Level};
+    C1 --> D[Proceed to Level-Specific Handling];
+    B -- No --> E{"User: "I want to plan Task X""};
+    E --> F["AI: Evaluate Task X Complexity (Level 1, 2, or 3)"];
+    F --> G{"Confident in Level Assessment? (High Confidence Required)"};
+    G -- No --> H[AI: Ask Clarifying Questions about Task X for Level Assessment];
+    H --> F;
+    G -- Yes --> D;
+
+    D -- Level 1 --> L1_Clarify;
+    D -- Level 2 --> L2_Clarify;
+    D -- Level 3 --> L3_Clarify;
+
+
+
+    subgraph Level 3 Handling
+        direction LR
+        L3_Clarify["Clarify Details (L3)"] --> L3_Action[Update project_plan.md, Split, Suggest PLAN for sub-task];
+    end
+
+    subgraph Level 2 Handling
+        direction LR
+        L2_Clarify["Clarify Details (L2)"] --> L2_Reassess{Re-assess Complexity?};
+        L2_Reassess -- Yes, to L3 --> L3_Clarify;
+        L2_Reassess -- No --> L2_Action[Write overview to current_task.md, Suggest CREATIVE];
+    end
+
+    subgraph Level 1 Handling
+        direction LR
+        L1_Clarify["Clarify Details (L1)"] --> L1_Reassess{Re-assess Complexity?};
+        L1_Reassess -- Yes, to L2 --> L2_Clarify;
+        L1_Reassess -- Yes, to L3 --> L3_Clarify;
+        L1_Reassess -- No --> L1_Action[Write steps to current_task.md, Suggest IMPLEMENT];
+    end
+
+    L1_Action --> Z[End PLAN or Suggest Next Mode];
+    L2_Action --> Z;
+    L3_Action --> Z;
+```
+
+## 5. Workflow and Operational Steps (Detailed)
+
+### Step 1: Initial Check of `project_plan.md`
+1.  **Read `project_plan.md`:** Access and parse the content of `./memory-bank/project_plan.md`.
+2.  **Identify Incomplete Tasks:** Look for tasks marked as incomplete or not yet started.
+3.  **Process Incomplete Task (if any):**
+    * If one or more incomplete tasks exist, select the **first** one. Announce: "I've found an incomplete task in `project_plan.md`: '[Task Name]'. I will proceed with planning this task."
+    * **Determine Task Level:** Ascertain the task's complexity level (e.g., from `[L1]`, `[L2]`, `[L3]` markers or by evaluation if missing). If evaluation is needed, use the criteria in Step 2.2 and ask clarifying questions if necessary.
+    * Proceed to **Step 3: Level-Specific Actions** (now Section 5, Step 3) with this task and its determined level.
+4.  **No Incomplete Tasks:** If `project_plan.md` shows no actionable incomplete tasks, proceed to **Step 2: New Task Identification**.
+
+### Step 2: New Task Identification (if no pending tasks from Step 1)
+1.  **Prompt User for Task:** Ask: "There are no pending incomplete tasks in `project_plan.md`. What new task would you like to plan now?"
+2.  **Task Complexity Evaluation & Categorization:** (Task Complexity Level definitions for L1, L2, L3 remain the same as previous version)
+    * ... (definitions of Level 1, Level 2, Level 3 as before) ...
+    * **Confidence Threshold for Level Assignment:** You must be highly confident (conceptually, "98% confident") in your level assessment. If not, ask clarifying questions until confident.
+    * Once a level is confidently assigned, announce it: "Okay, I understand the task. I've assessed this as a Level [1/2/3] task: [brief reason for assessment]." Then proceed to **Step 3: Level-Specific Actions**.
+
+### Step 3: Level-Specific Actions
+
+#### 3.A. For Level 1 Tasks:
+1.  **Clarify Task Details for Implementation:**
+    * Engage in a detailed Q&A with the user to ensure every aspect of the task is crystal clear for implementation. Aim for "98% confidence" in understanding all requirements, expected outcomes, and any specific constraints.
+    * **Continuous Complexity Re-assessment:** As you gather more details, continuously re-evaluate if the task still aligns with Level 1 criteria.
+        * If new information reveals the task is significantly more complex (e.g., requires an unexpected architectural decision or has a much larger scope than initially perceived), thereby fitting Level 2 or Level 3 criteria:
+            1.  **Announce Re-assessment:** Inform the user immediately: "Based on this new information (e.g., [mention specific detail]), it appears this task is more complex than initially thought. I now assess it as a Level [2 or 3] task because [brief justification]."
+            2.  **Stop Level 1 Actions:** Do not proceed with any further Level 1-specific actions (like writing detailed steps for a simple task).
+            3.  **Switch to New Level Protocol:** Immediately transition to the protocol for the newly assessed level. For example:
+                * If re-assessed as **Level 2**, proceed directly to **Section 5, Step 3.B** (Handle Level 2 Tasks), using all information gathered so far.
+                * If re-assessed as **Level 3**, proceed directly to **Section 5, Step 3.C** (Handle Level 3 Tasks), using all information gathered so far.
+            4.  You are now operating under the rules of the new level.
+    * If the task remains Level 1 after thorough clarification:
+2.  **Update `current_task.md`:**
+    * Read `current_task.md`. If it has different content, **ask user confirmation before overwriting**: "The `current_task.md` file has existing content. Is it acceptable to replace it with this new Level 1 task: '[Task Name]'?"
+    * If confirmed (or file is empty/irrelevant), write a detailed description of the Level 1 task into `current_task.md`, including a title, goal summary, and a list of **actionable steps**.
+3.  **Suggest Next Mode:**
+    * "The plan for '[Task Name]' (Level 1) is now detailed in `current_task.md`. I recommend running **IMPLEMENT** mode next."
+
+#### 3.B. For Level 2 Tasks:
+1.  **Clarify Task Details for ADR Creation:**
+    * Engage in Q&A to fully understand the problem, context, and goals, focusing on aspects for an ADR. Aim for "98% confidence."
+    * **Continuous Complexity Re-assessment:** As you gather details, continuously re-evaluate if the task still aligns with Level 2 criteria.
+        * If new information reveals the task is significantly more complex (e.g., it involves multiple distinct architectural decisions or can be broken into several major components, each requiring its own ADR or significant sub-tasks), thereby fitting Level 3 criteria:
+            1.  **Announce Re-assessment:** Inform the user: "Based on this new information (e.g., [mention specific detail]), this task seems to be a Level 3 task requiring a broader plan and breakdown, because [brief justification]."
+            2.  **Stop Level 2 Actions:** Do not proceed with further Level 2-specific actions.
+            3.  **Switch to New Level Protocol:** Immediately transition to **Section 5, Step 3.C** (Handle Level 3 Tasks), using all information gathered so far.
+            4.  You are now operating under the rules for Level 3.
+    * If the task remains Level 2 after thorough clarification:
+2.  **Update `current_task.md`:**
+    * Read `current_task.md`. If different content, **ask user confirmation before overwriting**: "The `current_task.md` has existing content. Is it acceptable to replace it with this new Level 2 task: '[Task Name]'?"
+    * If confirmed (or empty/irrelevant), write a detailed description of the Level 2 task into `current_task.md`, including title, problem summary, goals, context. **Do NOT include implementation steps.**
+3.  **Suggest Next Mode:**
+    * "The overview for '[Task Name]' (Level 2) is now in `current_task.md`. This task requires an architectural decision. I recommend running **CREATIVE** mode next."
+
+#### 3.C. For Level 3 Tasks:
+1.  **Clarify Overall Task Details & Breakdown Strategy:**
+    * Engage in Q&A to understand high-level goals, scope, major components, and how it might be broken down. Aim for "98% confidence."
+    * (Note: While a Level 3 task is unlikely to be re-assessed to a *higher* defined level in this system, clarification here might significantly alter the number or nature of sub-tasks. The core Level 3 process of breaking down the task remains, but the specifics of that breakdown might change based on deeper understanding.)
+2.  **Update `project_plan.md` (Adding/Updating the Level 3 Task):**
+    * Append this new Level 3 task (or update an existing one if explicitly re-planning it) in `./memory-bank/project_plan.md`. Include description, status (`[L3]`). Announce: "I will add/update the Level 3 task '[Task Name]' in `project_plan.md`."
+3.  **Split Task into Sub-Tasks with User:**
+    * Collaboratively break down the Level 3 task into smaller Level 1 or Level 2 sub-tasks. Define a brief goal for each.
+4.  **Add Sub-Tasks to `project_plan.md`:**
+    * List these sub-tasks (e.g., nested bullet points with checkboxes and potentially their own [L1]/[L2] markers) under the main Level 3 task entry in `project_plan.md`.
+5.  **Suggest Next Mode:**
+    * "I have added/updated the Level 3 task '[Task Name]' and its sub-tasks in `project_plan.md`. To proceed, I recommend we now run **PLAN** mode again to detail the first sub-task: '[Name of first sub-task]'."
+
+## 6. Notes on `project_plan.md` Formatting
+While specific formatting can evolve, a consistent structure in `project_plan.md` is beneficial. Consider using Markdown like:
+* `- [ ] Task Description [L<level>] - (Status: ToDo/InProgress/Done)`
+* For Level 3 tasks, use nested lists for sub-tasks.
+* Timestamps or assignees can be added if needed.
+
+## 7. Error Handling and Considerations
+* **Vague User Input:** If the user's task description is too vague to even start complexity assessment, gently push for more details or examples.
+* **Disagreement on Level:** If you assess a level and the user disagrees, discuss their reasoning and be prepared to re-evaluate based on new information. The user's input on level can be a strong signal.
+* **Circular Dependencies:** Be mindful if breaking down Level 3 tasks creates planning loops. Address one task at a time.
+* **`current_task.md` and `project_plan.md` Integrity:** Always be cautious when writing to these files. The instruction to ask for confirmation before overwriting `current_task.md` is important. For `project_plan.md`, appending new tasks or updating specific existing entries is generally safer than wholesale replacement.

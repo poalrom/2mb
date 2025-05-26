@@ -1,0 +1,139 @@
+---
+description: Mode Rule: IMPLEMENT
+globs: 
+alwaysApply: false
+---
+# Mode Rule: IMPLEMENT
+
+## 1. Objective
+When in `IMPLEMENT` mode, your primary objective is to write, modify, and verify code to complete **one specific step** of the current task as detailed in `current_task.md`. This involves:
+* **Mandatory Adherence:** Strictly following all guidelines listed in the "Common Guidelines" section of `./memory-bank/tech/index.md` (and the documents they link to).
+* Adhering to all other relevant guidelines:
+    * Other specific standards and guidelines detailed within `./memory-bank/tech/` (via `index.md`).
+    * ADRs from `./memory-bank/architecture/`.
+* Iteratively implementing, self-verifying, and seeking user validation for the current step.
+* Responding to user commands, including `STOP`.
+* Ensuring any code changes are correct and directly address the requirements of the current step.
+
+## 2. CRITICAL OPERATING PRINCIPLES
+1.  **ONE STEP AT A TIME:** You **MUST** focus exclusively on implementing only the *single, current, actionable step* identified from `current_task.md`.
+2.  **GUIDELINE ADHERENCE (ABSOLUTE):** All coding **MUST** strictly follow **all** guidelines specified in the "Common Guidelines" section of `./memory-bank/tech/index.md` (and the documents they reference). Additionally, all other applicable guidelines from the broader `./memory-bank/tech/` structure and relevant ADRs **MUST** also be strictly followed. Conflicts between guidelines should be immediately raised with the user for clarification, clearly stating which guidelines are in conflict.
+3.  **USER COLLABORATION:** Implementation is an interactive process. Actively seek clarification, involve the user in verification, and listen for specific commands like `STOP`.
+
+## 3. Primary Outputs
+* Modified source code files reflecting the implemented step(s).
+* An updated `./memory-bank/current_task.md` with step(s) marked as completed.
+
+
+## 4. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start IMPLEMENT Mode] --> B{Load current_task.md, ADRs, & All Guidelines from ./memory-bank/tech/};
+    B --> C[Identify Next Incomplete Step from current_task.md];
+    C -- No More Incomplete Steps --> C_End[Task Complete! Update current_task.md. Suggest updating project_plan.md & possibly REFLECT mode];
+    C -- Step Identified --> G_Clarify;
+
+    subgraph Current Step Implementation Cycle
+        direction TB
+        G_Clarify["Ask Clarifying Questions for Step (if needed)"];
+        G_Clarify --> G_Code[Write/Modify Code for the Current Step, Adhering to All Guidelines];
+        G_Code --> G_SelfVerify["Self-Verify Implemented Code (logic, adherence to ALL guidelines, basic checks)"];
+        G_SelfVerify --> G_UserGuide[Provide User with Guide to Manually Check This Step];
+        G_UserGuide --> G_UserCheck{"User Verifies Functionality - Waits for User Input (Approval, Issues, or STOP)"};
+        G_UserCheck -- Issues Reported --> G_Fix[Fix Reported Issues];
+        G_Fix --> G_Clarify; 
+        G_UserCheck -- Approved (No Issues) --> O[Mark Current Step as Completed in current_task.md];
+        G_UserCheck -- User Says STOP --> S_StopProcessing[User issued STOP: Mark Current Step as Completed. Halt further steps for this task.];
+    end
+    
+    O --> P{More Incomplete Steps in current_task.md?};
+    P -- Yes --> Q[Suggest User Run IMPLEMENT Mode Again for Next Step];
+    P -- No --> C_End;
+
+    S_StopProcessing --> C_End_Stopped[Inform user process stopped. End IMPLEMENT mode for this task.];
+
+    Q --> R[End IMPLEMENT Mode for this cycle];
+    C_End --> R;
+    C_End_Stopped --> R;
+```
+
+## 5. Workflow and Operational Steps (Detailed)
+
+### Step 1: Load Context and Identify Next Actionable Step
+1.  **Load `current_task.md`:** Read and fully understand the contents of `./memory-bank/current_task.md`, including the overall task goal and the list of implementation steps.
+2.  **Identify Next Incomplete Step:** Scan the list of steps in `current_task.md` and identify the *first step* that is not yet marked as completed.
+    * If all steps are marked as completed:
+        1.  Announce: "All steps in `current_task.md` for '[Task Name]' are marked as complete!"
+        2.  Suggest: "You may want to update the status of this task in `project_plan.md`. This would also be a good time to run **REFLECT** mode to review the completed work."
+        3.  Conclude `IMPLEMENT` mode.
+    * If an incomplete step is identified:
+        1.  Announce: "Now working on step: '[Description of current step]'."
+        2.  Proceed to the next actions.
+3.  **Load All Applicable Guidelines and Supporting Documentation:**
+    * **a. Standards and Technical Guidelines from `./memory-bank/tech/index.md` (Mandatory & Comprehensive):**
+        1.  Read the main guideline index file: `./memory-bank/tech/index.md`. This file is the central hub for all technical standards and guidelines.
+        2.  **Locate the "Common Guidelines" Section:** Within `./memory-bank/tech/index.md`, you **MUST** specifically identify and parse a section explicitly designated as "Common Guidelines" (or a similarly named section clearly indicating universally applicable rules, e.g., "Core Implementation Standards," "Universal Coding Principles").
+        3.  **Load ALL Common Guidelines:** For **every guideline document path or link** found *within this designated "Common Guidelines" section*, you **MUST** read its full content. These are non-negotiable and apply to all implementation work.
+        4.  **Load Other Relevant Technical Guidelines:** After processing the "Common Guidelines" section, review the rest of `./memory-bank/tech/index.md` and any other documents it links to within the `./memory-bank/tech/` folder structure (e.g., `./memory-bank/tech/frontend/state_management.md`, `./memory-bank/tech/api_specifics.md`). Read all guidelines from these other sections that are relevant to the current task, technologies being used, or specific aspects of the application being worked on.
+        5.  **Strict Adherence Announcement:** Announce: "I have loaded all guidelines from the 'Common Guidelines' section of `./memory-bank/tech/index.md`, as well as other relevant technical guidelines from this area. I will strictly adhere to all of them."
+    * **b. ADRs:** Read any Architectural Decision Records (ADRs) referenced in `current_task.md` or those relevant to the overall task from `./memory-bank/architecture/`.
+    * **c. Other Task-Specific Tech Info:** If `current_task.md` or the ADRs point to specific technology choices or configurations (potentially detailed in other parts of `./memory-bank/tech/`), ensure these are also understood and considered part of the technical guidelines for the task.
+
+### Step 2: Implement Current Step (Iterative Cycle)
+This is an iterative sub-process for the **single current step**.
+
+1.  **Clarify Requirements for the Step:**
+    * Before writing any code, ensure you fully understand the requirements and expected outcome of *this specific step*, considering all loaded guidelines (especially the "Common Guidelines" from `memory-bank/tech/index.md`, other relevant tech guidelines, and ADRs).
+    * Ask clarifying questions if any ambiguity exists: "For this step, '[Step Description]', based on Common Guideline [specific common guideline name/section] and Tech Guideline [specific tech guideline], should the behavior be X or Y when [condition]?"
+2.  **Write/Modify Code:**
+    * Implement the code changes necessary to complete **only** the current step.
+    * **Strictly adhere** to **all** loaded and applicable guidelines. The "Common Guidelines" are paramount. If there's a conflict between a Common Guideline and another more specific guideline, or between any two guidelines, you **MUST** point this out to the user and ask for explicit clarification on which directive takes precedence for this specific case before proceeding.
+3.  **Self-Verify Implementation:**
+    * After making code changes, perform self-verification:
+        * Review your code against the step's requirements.
+        * Check for obvious errors, typos, or logical flaws.
+        * **Crucially, ensure adherence to all applicable guidelines, especially the "Common Guidelines."**
+        * Briefly explain to the user what you did and why you believe it correctly implements the step and adheres to all relevant guidelines.
+4.  **Request User Verification (with Guidance):**
+    * Inform the user: "I've implemented the step: '[Step Description]'. The changes involve [brief summary] and I believe it's working correctly and follows all loaded guidelines because [brief rationale]."
+    * Provide a clear, concise guide on how they can manually check or test the functionality of *this specific implemented step*.
+5.  **Address User Feedback / Process User Command:**
+    * Wait for the user to perform their check and provide feedback or a command.
+    * **If the user reports issues, bugs, or requests modifications for the current step:**
+        1.  Acknowledge the feedback: "Thank you for the feedback. I will work on fixing [issue summary]."
+        2.  Return to **Step 2.1 (Clarify Requirements)** or **Step 2.2 (Write/Modify Code)** within this sub-process to address the reported issues for the *same current step*, ensuring fixes also adhere to all guidelines. Repeat the self-verification and user verification cycle.
+    * **If the user explicitly approves the step (e.g., "Looks good," "Approved," "Continue"):**
+        1.  Proceed to **Step 3 (Mark Step Completion)**.
+    * **If the user issues a `STOP` command:**
+        1.  Acknowledge: "Understood, `STOP` command received. This means the current step, '[Step Description]', is considered correctly implemented, and we will not proceed with further steps in this task during this session."
+        2.  Proceed to **Step 3 (Mark Step Completion)** for the *current step*.
+        3.  After marking the current step complete, immediately proceed to **Step 4.3 (Handle `STOP` Command Finalization)**.
+
+### Step 3: Mark Step Completion
+1.  Upon user approval of the current step OR upon receiving a `STOP` command (which implies approval of the current step as per user instruction):
+2.  Update `./memory-bank/current_task.md` by marking the *current step* (the one just worked on) as completed.
+    * Example: Change `- [ ] Original step description` to `- [x] Original step description`.
+3.  Announce: "Great! I've marked the step '[Step Description]' as completed in `current_task.md`."
+
+### Step 4: Determine Next Action
+1.  **Check for `STOP` Command Finalization first:**
+    * If a `STOP` command was processed in Step 2.5 and led to Step 3, skip to Step 4.3.
+2.  **Check for Remaining Steps (Normal Flow):**
+    * Review `current_task.md` for any further incomplete steps.
+    * **If Incomplete Steps Remain:**
+        1.  Suggest: "There are more steps remaining in `current_task.md`. Please run **IMPLEMENT** mode again when you're ready to proceed with the next step: '[Description of next incomplete step]'."
+        2.  Conclude `IMPLEMENT` mode for this cycle.
+    * **If All Steps Are Complete (Normal Flow):** (This case is handled by Step 1.2.a, leading to task completion, which would have been reached if `STOP` wasn't issued and all steps got completed sequentially).
+3.  **Handle `STOP` Command Finalization:**
+    * Announce: "Implementation has been halted for the current task '[Task Name]' as per your `STOP` command. No further steps from `current_task.md` will be processed at this time."
+    * You may suggest: "You can choose to start a new task, switch to another mode (e.g., `PLAN` or `REFLECT`), or continue later."
+    * Conclude `IMPLEMENT` mode.
+
+## 6. Self-Verification Capabilities
+Your self-verification (Step 2.3) should include, but is not limited to:
+* **Code Review:** Mentally stepping through the code to ensure logical correctness.
+* **Guideline Adherence Check:** Comparing the implemented code against all applicable guidelines, with special emphasis on the "Common Guidelines" from `./memory-bank/tech/index.md` and any other relevant documents from `./memory-bank/tech/` and ADRs.
+* **Requirement Matching:** Ensuring the code directly addresses the specific requirements of the current step.
+* **Basic Static Checks:** Identifying syntax errors or linting issues if tools were hypothetically available (conceptually, look for patterns that would cause such issues).
+* **Explanation of Correctness:** Articulating why the solution is believed to be correct and compliant with all pertinent guidelines.

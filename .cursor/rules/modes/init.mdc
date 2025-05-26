@@ -1,0 +1,106 @@
+---
+description: Mode Rule: INIT
+globs: 
+alwaysApply: false
+---
+# Mode Rule: INIT
+
+## 1. Objective
+When in `INIT` mode, your primary objective is to thoroughly investigate and document the project's technical stack. This includes identifying the main technologies, programming languages, frameworks, and, most importantly, all relevant dependencies with their **exact versions**.
+
+## 2. Primary Output
+All gathered and verified technical stack information, especially the list of dependencies and their versions, **MUST** be documented by updating the `./memory-bank/tech/index.md` file. You should aim to create or update a dedicated section within this file for dependencies (e.g., under a heading like "## Detected Dependencies and Versions").
+
+## 3. High-Level Workflow Overview
+
+```mermaid
+graph TD
+    A[Start INIT Mode] --> B{Consult User for Initial Project Info};
+    B --> C[Analyze User Input & Formulate Strategy];
+    C --> D[Execute Dependency Discovery Techniques];
+    D --> E[Consolidate & Format Discovered Information];
+    E --> F[Update ./memory-bank/tech/index.md];
+    F --> G[Report Completion to User];
+    G --> H[End INIT Mode];
+```
+
+## 4. Workflow and Operational Steps (Detailed)
+
+### Step 1: Initial User Consultation
+1.  Begin by informing the user that you are in `INIT` mode and will be analyzing the project's technical stack.
+2.  Ask the user for preliminary information about the project. This will help you tailor your investigation strategy. Key questions to ask:
+    * "Could you please provide a brief overview of this project? For example, is it a frontend application, a backend service, a mobile app, a library, or a full-stack project?"
+    * "What are the primary programming languages (e.g., JavaScript, Python, Java, Ruby, Go) or frameworks (e.g., React, Angular, Vue, Django, Flask, Spring Boot, Ruby on Rails) you know are being used?"
+    * "Are there any specific build tools or package managers you are aware of in this project?"
+
+### Step 2: Information Analysis and Strategy Formulation
+1.  Analyze the user's responses to form an initial hypothesis about the project type and the likely tools or files to inspect.
+2.  Based on this hypothesis, select the most appropriate techniques for dependency discovery from the strategies outlined below or adapt as necessary.
+
+### Step 3: Dependency Discovery Techniques
+Your goal is to find a definitive list of project dependencies and their exact installed versions.
+
+#### A. Frontend JavaScript Projects (e.g., Node.js environment)
+If the project is identified as a frontend JavaScript project or if a `package.json` file is present:
+1.  **Identify Package Manager:**
+    * Check for `yarn.lock`: If present, Yarn is likely used.
+    * Check for `pnpm-lock.yaml`: If present, PNPM is likely used.
+    * Check for `package-lock.json`: If present, NPM is likely used.
+    * If only `package.json` is found, ask the user which package manager (`npm`, `yarn`, `pnpm`) is standard for this project. If unsure, attempt with `npm` first.
+2.  **List Dependencies using CLI:** Execute the appropriate command in the project's root directory. You need to parse the output to extract package names and their exact versions.
+    * **NPM:** `npm list --depth=0 --long=false` (Parse this for user-installed packages. Alternatively, `npm list --depth=0 --json` might be easier to parse if you can process JSON output).
+    * **Yarn (Classic & Berry):** `yarn list --depth=0 --no-progress` (For Yarn Berry, if direct dependencies are needed, parsing `yarn info --json -R` for workspaces or `yarn constraints --json` might be more accurate, or simply rely on the lock file contents if direct CLI for listing versions isn't straightforward for *only* production dependencies). A simpler approach for Yarn might be to analyze the `yarn.lock` file or `package.json` combined with user confirmation for versions.
+    * **PNPM:** `pnpm list --depth=0` (or `pnpm list --depth=0 --json`).
+3.  **Focus:** Prioritize explicitly listed dependencies (not sub-dependencies of dependencies, unless the goal is a full tree).
+
+#### B. Python Projects
+If the project is identified as a Python project:
+1.  **Check for common dependency management files:**
+    * `poetry.lock` and `pyproject.toml` (Poetry):
+        * Command: `poetry show --no-dev` (to list runtime dependencies and their exact versions). Parse the output.
+    * `Pipfile.lock` and `Pipfile` (Pipenv):
+        * Command: `pipenv graph --json` (parse the JSON output) or `pipenv lock -r` to generate a requirements.txt format. Focus on non-dev packages.
+    * `requirements.txt` (pip):
+        * This file often contains exact versions. If versions are specified as ranges, and a virtual environment is detectable and active, you can use `pip freeze` to get exact installed versions.
+        * If no virtual environment is obvious, report versions as specified in `requirements.txt` and note if they are ranges.
+2.  **General Fallback (if a virtual environment is active):**
+    * Command: `pip freeze`. This lists all installed packages in the current Python environment.
+
+#### C. Other Project Types (General Guidance)
+* For other project types (e.g., Java with Maven/Gradle, Ruby with Bundler, Go with Go Modules, Rust with Cargo), adapt your strategy:
+    * **Java (Maven):** Analyze `pom.xml`. The `dependencyManagement` and `dependencies` sections are key. Effective version can be complex; look for explicit versions.
+    * **Java (Gradle):** Analyze `build.gradle` or `build.gradle.kts`. Dependencies are in the `dependencies { ... }` block.
+    * **Ruby (Bundler):** Analyze `Gemfile` and `Gemfile.lock`. `Gemfile.lock` contains exact versions. Command: `bundle list`.
+    * **Go (Go Modules):** Analyze `go.mod`. `go.sum` contains checksums. Command: `go list -m all`.
+    * **Rust (Cargo):** Analyze `Cargo.toml` and `Cargo.lock`. `Cargo.lock` contains exact versions.
+* **If unsure:** Ask the user for guidance on how dependencies are managed or which files to inspect for that specific project type.
+
+### Step 4: Information Consolidation and Formatting
+1.  Compile all the gathered information:
+    * Identified project type(s).
+    * Primary programming language(s) and framework(s).
+    * A comprehensive list of dependencies and their **exact versions**.
+2.  Format this information clearly. For dependencies, a Markdown table is recommended:
+    ```markdown
+    | Dependency Name | Version   | Notes (e.g., "Runtime", "Development") |
+    |-----------------|-----------|----------------------------------------|
+    | package-name    | 1.2.3     | Runtime                                |
+    | dev-tool        | 4.5.6     | Development                            |
+    ```
+    (Adapt columns as necessary. If distinguishing runtime/dev is not straightforward, a simple two-column table of Name/Version is sufficient).
+
+### Step 5: Update Memory Bank (`./memory-bank/tech/index.md`)
+1.  Read the existing content of `./memory-bank/tech/index.md`.
+2.  Locate or create a specific section for the technical stack and dependencies (e.g., under a heading like `## Detected Dependencies and Versions` or `## Technical Stack Overview`).
+3.  Insert or update this section with the formatted information gathered in Step 4. Ensure that other parts of the file remain untouched unless they are being explicitly updated with new, relevant information from this `INIT` process.
+4.  If the file or section previously contained dependency information, replace it with the newly discovered, up-to-date information to ensure accuracy.
+
+### Step 6: Final Report to User
+1.  Inform the user that the `INIT` mode operation is complete.
+2.  State that the project's technical stack and dependency information has been updated in `./memory-bank/tech/index.md`.
+3.  You may optionally provide a brief summary of the key findings directly to the user.
+
+## 5. Error Handling and Fallbacks
+* If a CLI command fails, try to understand the error message. If it's a known issue (e.g., command not found, suggesting a tool isn't installed), report this to the user and ask for guidance.
+* If expected files are not found, report this and ask the user for the correct locations or methods.
+* If you cannot definitively determine a dependency's exact version, note this in the `tech/index.md` file.

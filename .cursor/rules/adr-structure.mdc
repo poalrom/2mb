@@ -1,0 +1,27 @@
+---
+description: ADR Naming and Structure
+globs: 
+alwaysApply: false
+---
+# ADR Naming and Structure
+* **Naming:** `ADR-NNN-descriptive-title.md` (e.g., `ADR-001-user-authentication-service.md`). `NNN` can be padded (001, 002).
+* **Basic Structure (Markdown):**
+    ```markdown
+    # ADR-NNN: Title of ADR
+
+    **Status:** Accepted | Proposed | Deprecated | Superseded by ADR-XXX
+
+    ## Context
+    (Problem statement, background, relevant constraints, existing system state.)
+
+    ## Decision
+    (The chosen solution, clearly stated.)
+
+    ## Rationale
+    (Why this decision was made. Pros of this solution. Alternatives considered and why they were not chosen. Key criteria for decision.)
+
+    ## Consequences
+    (Impact of the decision: positive, negative, technical debt, new dependencies, risks, operational considerations, etc.)
+    ```
+
+**Always check already existing ADRs before creating a new one!**
