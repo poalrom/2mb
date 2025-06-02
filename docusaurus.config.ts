@@ -50,6 +50,19 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    [
+      './plugins/docusaurus-plugin-mdc-rules',
+      {
+        id: 'docusaurus-plugin-mdc-rules',
+        sourceDir: '.cursor/rules',
+        targetPath: 'rules',
+        includeMetadata: true,
+        crossReferenceBase: '/rules'
+      }
+    ],
+  ],
+
   themes: ['@docusaurus/theme-mermaid'],
 
   // In order for Mermaid code blocks in Markdown to work,
@@ -68,6 +81,11 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
+        {
+          href: '/rules/main',
+          label: 'Rules',
+          position: 'left',
+        },
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',
@@ -95,7 +113,7 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
     mermaid: {
-      theme: {light: 'neutral', dark: 'dark'},
+      theme: { light: 'neutral', dark: 'dark' },
     },
   } satisfies Preset.ThemeConfig,
 };
