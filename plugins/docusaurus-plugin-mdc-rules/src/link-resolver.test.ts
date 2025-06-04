@@ -11,14 +11,15 @@ describe('LinkResolver', () => {
     component: '@site/src/components/RulePage/index.tsx'
   };
 
-  const mockRules: RuleContent[] = [
+  const mockFiles: RuleContent[] = [
     {
       id: 'main',
       filePath: 'main.mdc',
       title: 'Main Rule',
       content: '',
       metadata: {},
-      permalink: '/rules/main'
+      permalink: '/rules/main',
+      toc: []
     },
     {
       id: 'modes/implement',
@@ -26,7 +27,8 @@ describe('LinkResolver', () => {
       title: 'Implement Mode',
       content: '',
       metadata: {},
-      permalink: '/rules/modes/implement'
+      permalink: '/rules/modes/implement',
+      toc: []
     },
     {
       id: 'modes/plan',
@@ -34,7 +36,8 @@ describe('LinkResolver', () => {
       title: 'Plan Mode',
       content: '',
       metadata: {},
-      permalink: '/rules/modes/plan'
+      permalink: '/rules/modes/plan',
+      toc: []
     },
     {
       id: 'adr-structure',
@@ -42,7 +45,8 @@ describe('LinkResolver', () => {
       title: 'ADR Structure',
       content: '',
       metadata: {},
-      permalink: '/rules/adr-structure'
+      permalink: '/rules/adr-structure',
+      toc: []
     }
   ];
 
@@ -54,7 +58,7 @@ describe('LinkResolver', () => {
   describe('resolveLinks', () => {
     it('should resolve relative .mdc links correctly', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = 'See [main rule](./main.mdc) and [implement mode](./modes/implement.mdc).';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -65,7 +69,7 @@ describe('LinkResolver', () => {
 
     it('should detect cross-references correctly', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = 'Links: ./main.mdc and ./modes/implement.mdc and ./nonexistent.mdc';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -90,7 +94,7 @@ describe('LinkResolver', () => {
 
     it('should not modify non-.mdc links', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = 'External link: [Google](https://google.com) and [relative](./file.txt)';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -101,7 +105,7 @@ describe('LinkResolver', () => {
 
     it('should handle multiple links in one content block', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = `
         Multiple links:
@@ -134,17 +138,18 @@ describe('LinkResolver', () => {
 
     it('should generate helpful warnings for broken links', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      const mockRules: RuleContent[] = [
+      const mockFiles: RuleContent[] = [
         {
           id: 'main',
           filePath: 'main.mdc',
           title: 'Main Rule',
           content: '',
           metadata: {},
-          permalink: '/rules/main'
+          permalink: '/rules/main',
+          toc: []
         }
       ];
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const brokenCrossRefs = [
         { original: './broken.mdc', resolved: '/rules/broken', isValid: false }
@@ -167,7 +172,8 @@ describe('LinkResolver', () => {
           title: 'Implement',
           content: '',
           metadata: {},
-          permalink: '/rules/implement'
+          permalink: '/rules/implement',
+          toc: []
         },
         {
           id: 'implementation-guide',
@@ -175,7 +181,8 @@ describe('LinkResolver', () => {
           title: 'Implementation Guide',
           content: '',
           metadata: {},
-          permalink: '/rules/implementation-guide'
+          permalink: '/rules/implementation-guide',
+          toc: []
         }
       ]);
 
@@ -198,7 +205,8 @@ describe('LinkResolver', () => {
         title: `Rule ${i}`,
         content: '',
         metadata: {},
-        permalink: `/rules/rule${i}`
+        permalink: `/rules/rule${i}`,
+        toc: []
       }));
       linkResolver.setDiscoveredFiles(manyRules);
 
@@ -223,7 +231,7 @@ describe('LinkResolver', () => {
 
     it('should return empty warnings for valid cross-references', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const validCrossRefs = [
         { original: './main.mdc', resolved: '/rules/main', isValid: true }
@@ -328,7 +336,7 @@ describe('LinkResolver', () => {
   describe('edge cases and error handling', () => {
     it('should handle content with no .mdc links', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = 'This content has no .mdc links at all.';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -339,7 +347,7 @@ describe('LinkResolver', () => {
 
     it('should handle malformed .mdc patterns', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = 'Malformed: .mdc and file.mdc and ./.mdc';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -349,7 +357,7 @@ describe('LinkResolver', () => {
 
     it('should handle content with only whitespace', () => {
       const linkResolver = new LinkResolver(mockConfig);
-      linkResolver.setDiscoveredFiles(mockRules);
+      linkResolver.setDiscoveredFiles(mockFiles);
 
       const content = '   \n\t  \r\n  ';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
@@ -368,7 +376,8 @@ describe('LinkResolver', () => {
           title: 'Long Path File',
           content: '',
           metadata: {},
-          permalink: `/rules/${longPath.replace('.mdc', '')}`
+          permalink: `/rules/${longPath.replace('.mdc', '')}`,
+          toc: []
         }
       ]);
 
@@ -388,7 +397,8 @@ describe('LinkResolver', () => {
           title: 'Special Chars File',
           content: '',
           metadata: {},
-          permalink: '/rules/special-chars_file@test'
+          permalink: '/rules/special-chars_file@test',
+          toc: []
         }
       ]);
 

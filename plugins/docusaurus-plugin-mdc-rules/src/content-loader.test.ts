@@ -17,7 +17,7 @@ jest.mock('unified', () => ({
   unified: jest.fn(() => ({
     use: jest.fn().mockReturnThis(),
     process: jest.fn().mockResolvedValue({
-      toString: () => '<h1>Test Heading</h1>\n<p>This is a <strong>bold</strong> text and <em>italic</em> text.</p>\n<pre><code class="language-javascript">console.log(\'Hello, world!\');\n</code></pre>\n<ul>\n<li>List item 1</li>\n<li>List item 2</li>\n</ul>\n<p><a href="https://example.com">Link example</a></p>'
+      toString: () => '<h1 id="test-heading">Test Heading</h1>\n<p>This is a <strong>bold</strong> text and <em>italic</em> text.</p>\n<h2 id="section-1">Section 1</h2>\n<p>Content for section 1.</p>\n<h3 id="subsection-11">Subsection 1.1</h3>\n<p>Content for subsection.</p>\n<pre><code class="language-javascript">console.log(\'Hello, world!\');\n</code></pre>\n<ul>\n<li>List item 1</li>\n<li>List item 2</li>\n</ul>\n<p><a href="https://example.com">Link example</a></p>'
     })
   }))
 }));
@@ -31,6 +31,10 @@ jest.mock('remark-gfm', () => ({
 }));
 
 jest.mock('remark-rehype', () => ({
+  default: jest.fn()
+}));
+
+jest.mock('rehype-slug', () => ({
   default: jest.fn()
 }));
 
@@ -179,7 +183,11 @@ describe('ContentLoader', () => {
 
       expect(result.content).toHaveLength(2);
       expect(result.content[0].filePath).toBe('file1.mdc');
+      expect(result.content[0]).toHaveProperty('toc');
+      expect(Array.isArray(result.content[0].toc)).toBe(true);
       expect(result.content[1].filePath).toBe('modes/file2.mdc');
+      expect(result.content[1]).toHaveProperty('toc');
+      expect(Array.isArray(result.content[1].toc)).toBe(true);
       expect(mockLinkResolver.setDiscoveredFiles).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ filePath: 'file1.mdc' }),
@@ -267,6 +275,8 @@ describe('ContentLoader', () => {
       const result = await contentLoader.loadContent();
 
       expect(result.content[0].title).toBe('Metadata Title');
+      expect(result.content[0]).toHaveProperty('toc');
+      expect(Array.isArray(result.content[0].toc)).toBe(true);
     });
 
     it('should extract title from description when title is missing', async () => {
@@ -491,7 +501,7 @@ console.log('Hello, world!');
       const result = await processMarkdown(markdownContent);
 
       // Verify that the result is HTML (mocked response)
-      expect(result).toContain('<h1>Test Heading</h1>');
+      expect(result).toContain('<h1 id="test-heading">Test Heading</h1>');
       expect(result).toContain('<strong>bold</strong>');
       expect(result).toContain('<em>italic</em>');
       expect(result).toContain('console.log(\'Hello, world!\');');

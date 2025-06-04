@@ -9,7 +9,8 @@ describe('SidebarGenerator', () => {
       title: 'Main Rule',
       content: '',
       metadata: { sidebarPosition: 1 },
-      permalink: '/rules/main'
+      permalink: '/rules/main',
+      toc: []
     },
     {
       id: 'modes/implement',
@@ -17,7 +18,8 @@ describe('SidebarGenerator', () => {
       title: 'Implement Mode',
       content: '',
       metadata: {},
-      permalink: '/rules/modes/implement'
+      permalink: '/rules/modes/implement',
+      toc: []
     },
     {
       id: 'modes/plan',
@@ -25,7 +27,8 @@ describe('SidebarGenerator', () => {
       title: 'Plan Mode',
       content: '',
       metadata: { sidebarPosition: 2 },
-      permalink: '/rules/modes/plan'
+      permalink: '/rules/modes/plan',
+      toc: []
     },
     {
       id: 'modes/doc',
@@ -33,7 +36,8 @@ describe('SidebarGenerator', () => {
       title: 'Doc Mode',
       content: '',
       metadata: {},
-      permalink: '/rules/modes/doc'
+      permalink: '/rules/modes/doc',
+      toc: []
     },
     {
       id: 'task-levels',
@@ -41,7 +45,8 @@ describe('SidebarGenerator', () => {
       title: 'Task Levels',
       content: '',
       metadata: {},
-      permalink: '/rules/task-levels'
+      permalink: '/rules/task-levels',
+      toc: []
     }
   ];
 
@@ -103,7 +108,8 @@ describe('SidebarGenerator', () => {
       title: 'Test Rule',
       content: '',
       metadata: {},
-      permalink: '/rules/test'
+      permalink: '/rules/test',
+      toc: []
     };
 
     const result = generator.generateSidebar([ruleWithoutMetadata]);
@@ -121,7 +127,8 @@ describe('SidebarGenerator', () => {
       title: 'Bad Path Rule',
       content: '',
       metadata: {},
-      permalink: '/rules/'
+      permalink: '/rules/',
+      toc: []
     };
 
     // Should not crash

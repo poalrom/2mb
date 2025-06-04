@@ -1,6 +1,18 @@
 import type { PropSidebar, PropSidebarItemCategory, PropSidebarItemLink } from '@docusaurus/plugin-content-docs';
 
 /**
+ * Table of Contents item structure
+ */
+export interface TOCItem {
+  /** Display text for the heading */
+  value: string;
+  /** Anchor ID for the heading */
+  id: string;
+  /** Heading level (1-6) */
+  level: number;
+}
+
+/**
  * Plugin configuration interface for docusaurus-plugin-mdc-rules
  * Defines all configuration options for the plugin
  */
@@ -47,6 +59,9 @@ export interface RuleContent {
 
   /** Generated permalink for the document */
   permalink: string;
+
+  /** Pre-generated table of contents */
+  toc: TOCItem[];
 }
 
 export interface RedirectPageProps {

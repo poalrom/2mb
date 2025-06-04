@@ -1,4 +1,3 @@
-import { TOCItem } from '@docusaurus/mdx-loader';
 import { DocsSidebarProvider } from '@docusaurus/plugin-content-docs/client';
 import { Redirect } from '@docusaurus/router';
 import { usePluginData } from '@docusaurus/useGlobalData';
@@ -11,32 +10,6 @@ import TOCCollapsible from '@theme/TOCCollapsible';
 import clsx from 'clsx';
 import React from 'react';
 import styles from './styles.module.css';
-
-// Helper function to extract TOC from markdown content
-function extractTOC(content: string): TOCItem[] {
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-  const toc: Array<{
-    value: string;
-    id: string;
-    level: number;
-  }> = [];
-
-  let match;
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length;
-    const value = match[2].trim();
-    const id = value
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-
-    toc.push({ value, id, level });
-  }
-
-  return toc;
-}
 
 // Helper function to parse content and extract mermaid diagrams
 function parseContentWithMermaid(htmlContent: string): React.ReactNode[] {
@@ -112,15 +85,12 @@ export default function RulePage(props: RulePageProps) {
     return <Redirect to={props.to} />;
   }
 
-  const { title, content: htmlContent, metadata } = props;
+  const { title, content: htmlContent, metadata, toc } = props;
 
   // Access plugin data for sidebar configuration
   const pluginData = usePluginData('docusaurus-plugin-mdc-rules', 'docusaurus-plugin-mdc-rules') as PluginData;
 
   const { sidebar } = pluginData;
-
-  // Generate TOC from markdown content
-  const toc = extractTOC(htmlContent);
 
   // Convert markdown content to HTML for display with mermaid support
   const MDXContentComponent = () => {
