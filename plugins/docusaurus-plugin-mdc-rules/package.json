@@ -13,7 +13,10 @@
   },
   "dependencies": {
     "fast-glob": "^3.3.2",
-    "remark": "^15.0.1"
+    "loader-runner": "^4.3.0",
+    "rehype-stringify": "^10.0.1",
+    "remark": "^15.0.1",
+    "remark-rehype": "^11.1.1"
   },
   "peerDependencies": {
     "@docusaurus/core": "^3.8.0"
@@ -40,6 +43,17 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(unified|remark-parse|remark-rehype|rehype-stringify|vfile|unist-util-.*|mdast-util-.*|micromark.*|hast-util-.*|hastscript|zwitch|longest-streak|character-entities.*|property-information|space-separated-tokens|comma-separated-tokens|web-namespaces|html-void-elements|ccount|markdown-table|is-plain-obj|devlop|bail)/)"
+    ],
     "roots": [
       "<rootDir>/src"
     ],

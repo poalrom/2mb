@@ -12,6 +12,28 @@ jest.mock('fast-glob');
 jest.mock('./link-resolver');
 jest.mock('./metadata-parser');
 
+// Mock the unified/remark modules
+jest.mock('unified', () => ({
+  unified: jest.fn(() => ({
+    use: jest.fn().mockReturnThis(),
+    process: jest.fn().mockResolvedValue({
+      toString: () => '<h1>Test Heading</h1>\n<p>This is a <strong>bold</strong> text and <em>italic</em> text.</p>\n<pre><code class="language-javascript">console.log(\'Hello, world!\');\n</code></pre>\n<ul>\n<li>List item 1</li>\n<li>List item 2</li>\n</ul>\n<p><a href="https://example.com">Link example</a></p>'
+    })
+  }))
+}));
+
+jest.mock('remark-parse', () => ({
+  default: jest.fn()
+}));
+
+jest.mock('remark-rehype', () => ({
+  default: jest.fn()
+}));
+
+jest.mock('rehype-stringify', () => ({
+  default: jest.fn()
+}));
+
 const mockedFs = fs as jest.Mocked<typeof fs>;
 const mockedGlob = glob as jest.MockedFunction<typeof glob>;
 const MockedLinkResolver = LinkResolver as jest.MockedClass<typeof LinkResolver>;
@@ -440,6 +462,75 @@ describe('ContentLoader', () => {
       expect(consoleSpy).toHaveBeenCalledWith('Found 1 .mdc files in /test/project/.cursor/rules');
       expect(consoleSpy).toHaveBeenCalledWith('Cross-reference resolution: 3/5 resolved (60%)');
       
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('processMarkdown', () => {
+    it('should convert markdown to HTML using remark/rehype pipeline', async () => {
+      // Access the private method through type assertion
+      const processMarkdown = (contentLoader as any).processMarkdown.bind(contentLoader);
+
+      const markdownContent = `# Test Heading
+
+This is a **bold** text and _italic_ text.
+
+\`\`\`javascript
+console.log('Hello, world!');
+\`\`\`
+
+- List item 1
+- List item 2
+
+[Link example](https://example.com)`;
+
+      const result = await processMarkdown(markdownContent);
+
+      // Verify that the result is HTML (mocked response)
+      expect(result).toContain('<h1>Test Heading</h1>');
+      expect(result).toContain('<strong>bold</strong>');
+      expect(result).toContain('<em>italic</em>');
+      expect(result).toContain('console.log(\'Hello, world!\');');
+      expect(result).toContain('<ul>');
+      expect(result).toContain('<li>List item 1</li>');
+      expect(result).toContain('<li>List item 2</li>');
+      expect(result).toContain('<a href="https://example.com">Link example</a>');
+
+      // Verify unified was called correctly
+      const { unified } = require('unified');
+      expect(unified).toHaveBeenCalled();
+    });
+
+    it('should handle empty markdown content', async () => {
+      const processMarkdown = (contentLoader as any).processMarkdown.bind(contentLoader);
+
+      const result = await processMarkdown('');
+
+      // Should return the mocked HTML result
+      expect(typeof result).toBe('string');
+      expect(result.length > 0).toBe(true);
+    });
+
+    it('should handle errors gracefully and return fallback HTML', async () => {
+      const processMarkdown = (contentLoader as any).processMarkdown.bind(contentLoader);
+      
+      // Mock console.error to avoid error output in tests
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      // Mock unified to throw an error
+      const { unified } = require('unified');
+      unified.mockImplementationOnce(() => {
+        throw new Error('Test error');
+      });
+
+      const malformedContent = 'Some content';
+      
+      const result = await processMarkdown(malformedContent);
+
+      // Should return fallback HTML (wrapped in pre tags)
+      expect(result).toBe('<pre>Some content</pre>');
+      expect(consoleSpy).toHaveBeenCalledWith('Error processing markdown content:', expect.any(Error));
+
       consoleSpy.mockRestore();
     });
   });

@@ -20,6 +20,7 @@ A custom Docusaurus plugin that processes `.mdc` files from `.cursor/rules/` dir
 ## Features
 
 - **Automatic File Discovery**: Recursively scans `.cursor/rules/` for `.mdc` files
+- **Markdown Processing**: Converts markdown to HTML using remark/rehype pipeline
 - **Content Processing**: Extracts frontmatter and processes markdown content
 - **Cross-Reference Resolution**: Converts relative `.mdc` references to internal documentation links
 - **Sidebar Generation**: Auto-generates navigation sidebar matching directory structure
@@ -106,6 +107,34 @@ The plugin automatically converts these to proper documentation links:
 See also: [Init Mode](/rules/modes/init) for more details.
 ```
 
+### Markdown Processing
+
+The plugin uses a modern remark/rehype pipeline to process markdown content:
+
+- **Remark**: Parses markdown to MDAST (Markdown Abstract Syntax Tree)
+- **Remark-Rehype**: Converts MDAST to HAST (Hypertext Abstract Syntax Tree)
+- **Rehype-Stringify**: Converts HAST to HTML string
+
+This approach provides:
+- **Standard Compliance**: Full CommonMark support
+- **Extensibility**: Easy to add remark/rehype plugins for additional features
+- **Performance**: Efficient processing with proper error handling
+- **Future-Proof**: Can easily add GFM, Mermaid, or other markdown extensions
+
+#### Supported Markdown Features
+
+- Headings (`# ## ###`)
+- Text formatting (**bold**, *italic*)
+- Code blocks with syntax highlighting
+- Lists (ordered and unordered)
+- Links and images
+- Blockquotes
+- Tables (with future GFM plugin)
+
+#### Error Handling
+
+If markdown processing fails, the plugin gracefully falls back to displaying the raw content wrapped in `<pre>` tags, ensuring the build never fails due to malformed markdown.
+
 ### Generated Routes
 
 The plugin generates routes based on your file structure:
@@ -120,8 +149,10 @@ The plugin consists of several core components:
 
 ### ContentLoader (`src/content-loader.ts`)
 - Discovers `.mdc` files using `fast-glob`
-- Extracts frontmatter and content
-- Returns structured `RuleContent[]` array
+- Extracts frontmatter and content using custom parser
+- Processes markdown to HTML using remark/rehype pipeline
+- Handles async processing with proper error handling
+- Returns structured `RuleContent[]` array with processed HTML content
 
 ### LinkResolver (`src/link-resolver.ts`)
 - Detects cross-reference patterns using regex `/\.\/[^\s\)]+\.mdc/g`
@@ -228,6 +259,13 @@ MIT License - see LICENSE file for details.
 6. Submit a pull request
 
 ## Changelog
+
+### v1.0.1
+- **NEW**: Implemented markdown processing using remark/rehype pipeline
+- **IMPROVED**: Markdown content is now converted to HTML for proper rendering
+- **ADDED**: Support for all standard markdown features (headings, formatting, code blocks, lists, links)
+- **ENHANCED**: Graceful error handling with fallback for malformed markdown
+- **FUTURE**: Ready for GFM and Mermaid extensions via remark plugins
 
 ### v1.0.0
 - Initial release with full `.mdc` file processing

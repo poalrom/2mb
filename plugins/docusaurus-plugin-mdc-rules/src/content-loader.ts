@@ -1,6 +1,10 @@
 import glob from 'fast-glob';
 import * as fs from 'fs';
 import * as path from 'path';
+import rehypeStringify from 'rehype-stringify';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import { unified } from 'unified';
 import { LinkResolver } from './link-resolver';
 import { MetadataParser } from './metadata-parser';
 import { InternalPluginConfig, ProcessingResult, RuleContent } from './types';
@@ -149,8 +153,8 @@ export class ContentLoader {
       // Generate permalink
       const permalink = this.generatePermalink(relativePath);
 
-      // Process markdown content (simplified for now)
-      const processedContent = this.processMarkdown(content);
+      // Process markdown content using remark/rehype pipeline
+      const processedContent = await this.processMarkdown(content);
 
       return {
         id: relativePath.replace(/\.mdc$/, '').replace(/\\/g, '/'),
@@ -215,14 +219,29 @@ export class ContentLoader {
   }
 
   /**
-   * Process markdown content (simplified version)
+   * Process markdown content using remark/rehype pipeline
    * @param content Raw markdown content
-   * @returns Processed markdown content
+   * @returns Processed HTML content
    */
-  private processMarkdown(content: string): string {
-    // For now, return content as-is
-    // TODO: Implement remark processing once ES module issues are resolved
-    // or when used within Docusaurus context where module resolution works properly
-    return content;
+  private async processMarkdown(content: string): Promise<string> {
+    try {
+      // Create unified processor with remark -> rehype -> stringify pipeline
+      const processor = unified()
+        .use(remarkParse) // Parse markdown to MDAST
+        .use(remarkRehype) // Convert MDAST to HAST
+        .use(rehypeStringify); // Convert HAST to HTML string
+
+      // Process the markdown content
+      const result = await processor.process(content);
+      
+      // Return the HTML string
+      return String(result);
+    } catch (error) {
+      // Log error and return original content as fallback
+      console.error(`Error processing markdown content:`, error);
+      
+      // Return content wrapped in a pre tag to preserve formatting as fallback
+      return `<pre>${content}</pre>`;
+    }
   }
 } 
