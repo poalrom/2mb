@@ -5,9 +5,11 @@ import { usePluginData } from '@docusaurus/useGlobalData';
 import { PluginData, RulePageProps } from '@site/plugins/docusaurus-plugin-mdc-rules/src/types';
 import DocRootLayout from '@theme/DocRoot/Layout';
 import Layout from '@theme/Layout';
+import Mermaid from '@theme/Mermaid';
 import TOC from '@theme/TOC';
 import TOCCollapsible from '@theme/TOCCollapsible';
 import clsx from 'clsx';
+import React from 'react';
 import styles from './styles.module.css';
 
 // Helper function to extract TOC from markdown content
@@ -36,6 +38,71 @@ function extractTOC(content: string): TOCItem[] {
   return toc;
 }
 
+// Helper function to parse content and extract mermaid diagrams
+function parseContentWithMermaid(htmlContent: string): React.ReactNode[] {
+  // Split content by mermaid code blocks
+  const mermaidRegex = /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  let keyCounter = 0;
+
+  while ((match = mermaidRegex.exec(htmlContent)) !== null) {
+    // Add HTML content before the mermaid block
+    if (match.index > lastIndex) {
+      const htmlPart = htmlContent.slice(lastIndex, match.index);
+      if (htmlPart.trim()) {
+        parts.push(
+          <div
+            key={`html-${keyCounter++}`}
+            dangerouslySetInnerHTML={{ __html: htmlPart }}
+          />
+        );
+      }
+    }
+
+    // Add the mermaid diagram
+    const mermaidCode = match[1]
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .trim();
+
+    parts.push(
+      <Mermaid key={`mermaid-${keyCounter++}`} value={mermaidCode} />
+    );
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining HTML content
+  if (lastIndex < htmlContent.length) {
+    const remainingHtml = htmlContent.slice(lastIndex);
+    if (remainingHtml.trim()) {
+      parts.push(
+        <div
+          key={`html-${keyCounter++}`}
+          dangerouslySetInnerHTML={{ __html: remainingHtml }}
+        />
+      );
+    }
+  }
+
+  // If no mermaid diagrams found, return the original HTML
+  if (parts.length === 0) {
+    parts.push(
+      <div
+        key="html-only"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
+    );
+  }
+
+  return parts;
+}
+
 /**
  * Rule page component for rendering individual .mdc files with Docusaurus docs layout
  * This component integrates with the docusaurus-plugin-mdc-rules plugin
@@ -45,7 +112,7 @@ export default function RulePage(props: RulePageProps) {
     return <Redirect to={props.to} />;
   }
 
-  const { id, title, content: markdownContent, metadata, permalink } = props;
+  const { title, content: htmlContent, metadata } = props;
 
   // Access plugin data for sidebar configuration
   const pluginData = usePluginData('docusaurus-plugin-mdc-rules', 'docusaurus-plugin-mdc-rules') as PluginData;
@@ -53,15 +120,16 @@ export default function RulePage(props: RulePageProps) {
   const { sidebar } = pluginData;
 
   // Generate TOC from markdown content
-  const toc = extractTOC(markdownContent);
+  const toc = extractTOC(htmlContent);
 
-  // Convert markdown content to HTML for display
+  // Convert markdown content to HTML for display with mermaid support
   const MDXContentComponent = () => {
+    const contentParts = parseContentWithMermaid(htmlContent);
+    
     return (
-      <div
-        className={clsx('markdown', styles.ruleContent)}
-        dangerouslySetInnerHTML={{ __html: markdownContent }}
-      />
+      <div className={clsx('markdown', styles.ruleContent)}>
+        {contentParts}
+      </div>
     );
   };
 
