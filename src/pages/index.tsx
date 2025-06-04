@@ -1,8 +1,7 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import type { ReactNode } from 'react';
-// Import README.md as an MDX component
-import ReadmeContent from '../../README.md';
+import MainPage from '../../docs/main.md';
 
 export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
@@ -12,7 +11,7 @@ export default function Home(): ReactNode {
       description={siteConfig.tagline}>
       <main style={{ padding: '2rem' }}>
         <div className="container">
-          <ReadmeContent />
+          <MainPage />
         </div>
       </main>
     </Layout>
