@@ -26,6 +26,10 @@ jest.mock('remark-parse', () => ({
   default: jest.fn()
 }));
 
+jest.mock('remark-gfm', () => ({
+  default: jest.fn()
+}));
+
 jest.mock('remark-rehype', () => ({
   default: jest.fn()
 }));

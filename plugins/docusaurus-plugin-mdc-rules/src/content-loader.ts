@@ -2,6 +2,7 @@ import glob from 'fast-glob';
 import * as fs from 'fs';
 import * as path from 'path';
 import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
@@ -153,7 +154,7 @@ export class ContentLoader {
       // Generate permalink
       const permalink = this.generatePermalink(relativePath);
 
-      // Process markdown content using remark/rehype pipeline
+      // Process markdown content using remark/rehype pipeline with GFM support
       const processedContent = await this.processMarkdown(content);
 
       return {
@@ -219,7 +220,7 @@ export class ContentLoader {
   }
 
   /**
-   * Process markdown content using remark/rehype pipeline
+   * Process markdown content using remark/rehype pipeline with GFM support
    * @param content Raw markdown content
    * @returns Processed HTML content
    */
@@ -228,6 +229,7 @@ export class ContentLoader {
       // Create unified processor with remark -> rehype -> stringify pipeline
       const processor = unified()
         .use(remarkParse) // Parse markdown to MDAST
+        .use(remarkGfm) // Add GitHub Flavored Markdown support (tables, strikethrough, task lists, autolinks)
         .use(remarkRehype) // Convert MDAST to HAST
         .use(rehypeStringify); // Convert HAST to HTML string
 
