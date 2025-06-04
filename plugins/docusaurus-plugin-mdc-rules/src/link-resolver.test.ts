@@ -1,8 +1,8 @@
 import { LinkResolver } from './link-resolver';
-import { PluginConfig, RuleContent } from './types';
+import { InternalPluginConfig, RuleContent } from './types';
 
 describe('LinkResolver', () => {
-  const mockConfig: PluginConfig = {
+  const mockConfig: InternalPluginConfig = {
     sourceDir: '.cursor/rules',
     targetPath: 'rules',
     includeMetadata: true,
@@ -13,6 +13,7 @@ describe('LinkResolver', () => {
 
   const mockRules: RuleContent[] = [
     {
+      id: 'main',
       filePath: 'main.mdc',
       title: 'Main Rule',
       content: '',
@@ -20,6 +21,7 @@ describe('LinkResolver', () => {
       permalink: '/rules/main'
     },
     {
+      id: 'modes/implement',
       filePath: 'modes/implement.mdc',
       title: 'Implement Mode',
       content: '',
@@ -27,6 +29,7 @@ describe('LinkResolver', () => {
       permalink: '/rules/modes/implement'
     },
     {
+      id: 'modes/plan',
       filePath: 'modes/plan.mdc',
       title: 'Plan Mode',
       content: '',
@@ -34,6 +37,7 @@ describe('LinkResolver', () => {
       permalink: '/rules/modes/plan'
     },
     {
+      id: 'adr-structure',
       filePath: 'adr-structure.mdc',
       title: 'ADR Structure',
       content: '',
@@ -132,6 +136,7 @@ describe('LinkResolver', () => {
       const linkResolver = new LinkResolver(mockConfig);
       const mockRules: RuleContent[] = [
         {
+          id: 'main',
           filePath: 'main.mdc',
           title: 'Main Rule',
           content: '',
@@ -157,6 +162,7 @@ describe('LinkResolver', () => {
       const linkResolver = new LinkResolver(mockConfig);
       linkResolver.setDiscoveredFiles([
         {
+          id: 'implement',
           filePath: 'implement.mdc',
           title: 'Implement',
           content: '',
@@ -164,6 +170,7 @@ describe('LinkResolver', () => {
           permalink: '/rules/implement'
         },
         {
+          id: 'implementation-guide',
           filePath: 'implementation-guide.mdc',
           title: 'Implementation Guide',
           content: '',
@@ -186,6 +193,7 @@ describe('LinkResolver', () => {
     it('should limit available files display to 5 with overflow indicator', () => {
       const linkResolver = new LinkResolver(mockConfig);
       const manyRules: RuleContent[] = Array.from({ length: 8 }, (_, i) => ({
+        id: `rule${i}`,
         filePath: `rule${i}.mdc`,
         title: `Rule ${i}`,
         content: '',
@@ -355,6 +363,7 @@ describe('LinkResolver', () => {
       const longPath = 'very/deep/nested/directory/structure/that/goes/on/for/a/very/long/time/file.mdc';
       linkResolver.setDiscoveredFiles([
         {
+          id: longPath,
           filePath: longPath,
           title: 'Long Path File',
           content: '',
@@ -374,6 +383,7 @@ describe('LinkResolver', () => {
       const linkResolver = new LinkResolver(mockConfig);
       linkResolver.setDiscoveredFiles([
         {
+          id: 'special-chars_file@test',
           filePath: 'special-chars_file@test.mdc',
           title: 'Special Chars File',
           content: '',

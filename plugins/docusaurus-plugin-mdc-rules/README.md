@@ -55,8 +55,7 @@ export default {
         id: 'docusaurus-plugin-mdc-rules',
         sourceDir: '.cursor/rules',
         targetPath: 'rules',
-        includeMetadata: true,
-        crossReferenceBase: '/rules'
+        includeMetadata: true
       }
     ],
   ],
@@ -71,7 +70,6 @@ export default {
 | `sourceDir` | `string` | `.cursor/rules` | Source directory containing `.mdc` files |
 | `targetPath` | `string` | `rules` | Target path for generated documentation routes |
 | `includeMetadata` | `boolean` | `true` | Whether to include metadata in generated documents |
-| `crossReferenceBase` | `string` | `/docs/rules` | Base URL for cross-reference links |
 | `mainRule` | `string` | `main` | Main rule file name without extension |
 | `component` | `string` | `@site/src/components/RulePage/index.tsx` | Component for rendering rule pages |
 
@@ -186,7 +184,6 @@ interface PluginConfig {
   sourceDir: string;
   targetPath: string;
   includeMetadata: boolean;
-  crossReferenceBase: string;
   mainRule: string;
   component: string;
 }

@@ -1,19 +1,19 @@
 import * as path from 'path';
-import { CrossReference, PluginConfig, RuleContent } from './types';
+import { CrossReference, InternalPluginConfig, RuleContent } from './types';
 
 /**
  * Link resolver for processing cross-references in .mdc files
  * Converts relative .mdc references to documentation URLs
  */
 export class LinkResolver {
-  private config: PluginConfig;
+  private config: InternalPluginConfig;
   private discoveredFiles: Map<string, RuleContent>;
   
   // Updated regex pattern for detecting relative .mdc references (more inclusive)
   // Matches patterns like: ./file.mdc, ./path/file.mdc, ./.cursor/rules/file.mdc
   private readonly MDC_LINK_PATTERN = /\.\/[^\s\)]+\.mdc/g;
 
-  constructor(config: PluginConfig) {
+  constructor(config: InternalPluginConfig) {
     this.config = config;
     this.discoveredFiles = new Map();
   }
@@ -91,7 +91,7 @@ export class LinkResolver {
       // Generate the documentation URL
       const pathWithoutExt = targetFilePath.replace(/\.mdc$/, '');
       const normalizedPath = pathWithoutExt.replace(/\\/g, '/');
-      const resolvedUrl = `${this.config.crossReferenceBase}/${normalizedPath}`;
+      const resolvedUrl = path.join(this.config.crossReferenceBase, normalizedPath);
       
       // Validate that the target file exists
       const isValid = this.validateTargetExists(targetFilePath, originalLink);

@@ -3,19 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LinkResolver } from './link-resolver';
 import { MetadataParser } from './metadata-parser';
-import { PluginConfig, ProcessingResult, RuleContent } from './types';
+import { InternalPluginConfig, ProcessingResult, RuleContent } from './types';
 
 /**
  * Content loader for processing .mdc files from .cursor/rules/
  * Implements file discovery, parsing, and transformation logic
  */
 export class ContentLoader {
-  private config: PluginConfig;
+  private config: InternalPluginConfig;
   private projectRoot: string;
   private linkResolver: LinkResolver;
   private metadataParser: MetadataParser;
 
-  constructor(config: PluginConfig, projectRoot: string) {
+  constructor(config: InternalPluginConfig, projectRoot: string) {
     this.config = config;
     this.projectRoot = projectRoot;
     this.linkResolver = new LinkResolver(config);
@@ -52,7 +52,7 @@ export class ContentLoader {
 
       for (const filePath of mdcFiles) {
         try {
-          const content = await this.processFile(filePath, sourceDir, false);
+          const content = await this.processFile(filePath, sourceDir);
           if (content) {
             processedContent.push(content);
           }
@@ -127,13 +127,11 @@ export class ContentLoader {
    * Process a single .mdc file
    * @param filePath Absolute path to the file
    * @param sourceDir Source directory root
-   * @param resolveLinks Whether to resolve cross-references (used in two-pass processing)
    * @returns Processed RuleContent or null if processing failed
    */
   private async processFile(
     filePath: string, 
-    sourceDir: string, 
-    resolveLinks: boolean = true
+    sourceDir: string,
   ): Promise<RuleContent | null> {
     try {
       // Read file content
@@ -155,12 +153,13 @@ export class ContentLoader {
       const processedContent = this.processMarkdown(content);
 
       return {
+        id: relativePath.replace(/\.mdc$/, '').replace(/\\/g, '/'),
         filePath: relativePath,
         title,
         content: processedContent,
         metadata: {
           ...metadata,
-          sourceFile: relativePath,
+          sourceFile: path.join(this.config.sourceDir, relativePath),
           lastModified: fs.statSync(filePath).mtime.toISOString()
         },
         permalink
@@ -212,7 +211,7 @@ export class ContentLoader {
     const normalizedPath = pathWithoutExt.replace(/\\/g, '/');
     
     // Generate permalink with base URL
-    return `${this.config.crossReferenceBase}/${normalizedPath}`;
+    return path.join(this.config.crossReferenceBase, normalizedPath);
   }
 
   /**

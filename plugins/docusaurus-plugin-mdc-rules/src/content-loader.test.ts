@@ -4,7 +4,7 @@ import * as path from 'path';
 import { ContentLoader } from './content-loader';
 import { LinkResolver } from './link-resolver';
 import { MetadataParser } from './metadata-parser';
-import { PluginConfig } from './types';
+import { InternalPluginConfig } from './types';
 
 // Mock dependencies
 jest.mock('fs');
@@ -19,7 +19,7 @@ const MockedMetadataParser = MetadataParser as jest.MockedClass<typeof MetadataP
 
 describe('ContentLoader', () => {
   let contentLoader: ContentLoader;
-  let mockConfig: PluginConfig;
+  let mockConfig: InternalPluginConfig;
   let mockLinkResolver: jest.Mocked<LinkResolver>;
   let mockMetadataParser: jest.Mocked<MetadataParser>;
   let projectRoot: string;

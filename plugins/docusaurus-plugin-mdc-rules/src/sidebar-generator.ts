@@ -13,7 +13,7 @@ export class SidebarGenerator {
    * @param ruleContent Array of processed rule content
    * @returns Sidebar configuration object
    */
-  generateSidebar(ruleContent: RuleContent[]): Record<string, SidebarItem[]> {
+  generateSidebar(ruleContent: RuleContent[]): SidebarItem[] {
     // Build directory tree structure
     const directoryTree = this.buildDirectoryTree(ruleContent);
     
@@ -21,9 +21,7 @@ export class SidebarGenerator {
     const sidebarItems = this.convertTreeToSidebarItems(directoryTree);
     
     // Return sidebar configuration for Docusaurus
-    return {
-      rules: sidebarItems
-    };
+    return sidebarItems;
   }
   
   /**
@@ -121,13 +119,10 @@ export class SidebarGenerator {
     // Extract sidebar position from frontmatter
     const position = this.extractSidebarPosition(rule.metadata);
     
-    // Generate document ID from file path (remove .mdc extension, use forward slashes)
-    const docId = rule.filePath.replace(/\.mdc$/, '').replace(/\\/g, '/');
-    
     return {
-      type: 'doc',
-      id: docId,
+      type: 'link',
       label: rule.title,
+      href: rule.permalink,
       ...(position !== undefined && { position })
     };
   }
@@ -147,7 +142,9 @@ export class SidebarGenerator {
     return {
       type: 'category',
       label: label,
-      items: items
+      items: items,
+      collapsed: true,
+      collapsible: true,
     };
   }
   

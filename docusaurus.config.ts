@@ -41,7 +41,12 @@ const config: Config = {
       'classic',
       {
         // Disable docs and blog since we only want the single page
-        docs: false,
+        docs: {
+          routeBasePath: '/docs',
+          path: './memory-bank',
+          sidebarPath: './sidebars.ts',
+          editUrl: 'https://github.com/facebook/docusaurus/edit/main/docs/',
+        },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
@@ -56,9 +61,8 @@ const config: Config = {
       {
         id: 'docusaurus-plugin-mdc-rules',
         sourceDir: '.cursor/rules',
-        targetPath: 'rules',
+        targetPath: '/rules',
         includeMetadata: true,
-        crossReferenceBase: '/rules'
       }
     ],
   ],
@@ -84,6 +88,11 @@ const config: Config = {
         {
           href: '/rules/main',
           label: 'Rules',
+          position: 'left',
+        },
+        {
+          href: '/qwe123',
+          label: 'Memory Bank',
           position: 'left',
         },
         {

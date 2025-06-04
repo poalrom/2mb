@@ -4,6 +4,7 @@ import { RuleContent } from './types';
 describe('SidebarGenerator', () => {
   const mockRules: RuleContent[] = [
     {
+      id: 'main',
       filePath: 'main.mdc',
       title: 'Main Rule',
       content: '',
@@ -11,6 +12,7 @@ describe('SidebarGenerator', () => {
       permalink: '/rules/main'
     },
     {
+      id: 'modes/implement',
       filePath: 'modes/implement.mdc',
       title: 'Implement Mode',
       content: '',
@@ -18,6 +20,7 @@ describe('SidebarGenerator', () => {
       permalink: '/rules/modes/implement'
     },
     {
+      id: 'modes/plan',
       filePath: 'modes/plan.mdc',
       title: 'Plan Mode',
       content: '',
@@ -25,6 +28,7 @@ describe('SidebarGenerator', () => {
       permalink: '/rules/modes/plan'
     },
     {
+      id: 'modes/doc',
       filePath: 'modes/doc.mdc',
       title: 'Doc Mode',
       content: '',
@@ -32,6 +36,7 @@ describe('SidebarGenerator', () => {
       permalink: '/rules/modes/doc'
     },
     {
+      id: 'task-levels',
       filePath: 'task-levels.mdc',
       title: 'Task Levels',
       content: '',
@@ -44,11 +49,10 @@ describe('SidebarGenerator', () => {
     const generator = new SidebarGenerator();
     const result = generator.generateSidebar(mockRules);
 
-    expect(result).toHaveProperty('rules');
-    expect(Array.isArray(result.rules)).toBe(true);
+    expect(Array.isArray(result)).toBe(true);
 
     // Should have at least the main rule and modes category
-    expect(result.rules.length).toBeGreaterThan(1);
+    expect(result.length).toBeGreaterThan(1);
   });
 
   it('should group rules by directory structure', () => {
@@ -56,7 +60,7 @@ describe('SidebarGenerator', () => {
     const result = generator.generateSidebar(mockRules);
 
     // Check if there are any categories
-    const categories = result.rules.filter(item => item.type === 'category');
+    const categories = result.filter(item => item.type === 'category');
     expect(categories.length).toBeGreaterThan(0);
   });
 
@@ -65,14 +69,14 @@ describe('SidebarGenerator', () => {
     const result = generator.generateSidebar(mockRules);
 
     // Find direct rules (not in categories)
-    const directRules = result.rules.filter(item => item.type === 'doc');
+    const directRules = result.filter(item => item.type === 'link');
 
     expect(directRules.length).toBeGreaterThan(0);
 
     // Should include main and task-levels
-    const ruleIds = directRules.map(rule => rule.id);
-    expect(ruleIds).toContain('main');
-    expect(ruleIds).toContain('task-levels');
+    const ruleLabels = directRules.map(rule => rule.label);
+    expect(ruleLabels).toContain('Main Rule');
+    expect(ruleLabels).toContain('Task Levels');
   });
 
   it('should preserve custom sidebar positions', () => {
@@ -80,46 +84,21 @@ describe('SidebarGenerator', () => {
     const result = generator.generateSidebar(mockRules);
 
     // Find main rule which has position 1
-    const mainRule = result.rules.find(item => item.id === 'main');
+    const mainRule = result.find(item => item.label === 'Main Rule');
     expect(mainRule?.position).toBe(1);
-  });
-
-  it('should create proper rule IDs from file paths', () => {
-    const generator = new SidebarGenerator();
-    const result = generator.generateSidebar(mockRules);
-
-    // Flatten all items to check IDs
-    const allItems: any[] = [];
-    const collectItems = (items: any[]) => {
-      for (const item of items) {
-        if (item.type === 'doc') {
-          allItems.push(item);
-        } else if (item.items) {
-          collectItems(item.items);
-        }
-      }
-    };
-
-    collectItems(result.rules);
-
-    const ids = allItems.map(item => item.id);
-    expect(ids).toContain('main');
-    expect(ids).toContain('modes/implement');
-    expect(ids).toContain('modes/plan');
-    expect(ids).toContain('modes/doc');
-    expect(ids).toContain('task-levels');
   });
 
   it('should handle empty rules array', () => {
     const generator = new SidebarGenerator();
     const result = generator.generateSidebar([]);
 
-    expect(result).toEqual({ rules: [] });
+    expect(result).toEqual([]);
   });
 
   it('should handle rules with missing metadata', () => {
     const generator = new SidebarGenerator();
     const ruleWithoutMetadata: RuleContent = {
+      id: 'test',
       filePath: 'test.mdc',
       title: 'Test Rule',
       content: '',
@@ -129,14 +108,15 @@ describe('SidebarGenerator', () => {
 
     const result = generator.generateSidebar([ruleWithoutMetadata]);
 
-    expect(result.rules).toHaveLength(1);
-    expect(result.rules[0].type).toBe('doc');
-    expect(result.rules[0].id).toBe('test');
+    expect(result).toHaveLength(1);
+    expect(result[0].type).toBe('link');
+    expect(result[0].href).toBe('/rules/test');
   });
 
   it('should handle malformed file paths', () => {
     const generator = new SidebarGenerator();
     const ruleWithBadPath: RuleContent = {
+      id: 'bad-path',
       filePath: '',
       title: 'Bad Path Rule',
       content: '',
