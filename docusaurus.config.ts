@@ -42,7 +42,7 @@ const config: Config = {
       {
         // Disable docs and blog since we only want the single page
         docs: {
-          routeBasePath: '/docs',
+          routeBasePath: '/memory-bank',
           path: './memory-bank',
           sidebarPath: './sidebars.ts',
           editUrl: 'https://github.com/facebook/docusaurus/edit/main/docs/',
@@ -91,7 +91,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: '/qwe123',
+          href: '/memory-bank/project_brief',
           label: 'Memory Bank',
           position: 'left',
         },
