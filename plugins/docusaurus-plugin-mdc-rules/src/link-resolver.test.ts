@@ -60,11 +60,21 @@ describe('LinkResolver', () => {
       const linkResolver = new LinkResolver(mockConfig);
       linkResolver.setDiscoveredFiles(mockFiles);
 
-      const content = 'See [main rule](./main.mdc) and [implement mode](./modes/implement.mdc).';
+      const content = 'See <a href="./main.mdc">main rule</a> and <a href="./modes/implement.mdc">implement mode</a>.';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
 
-      expect(result.content).toContain('[main rule](/rules/main)');
-      expect(result.content).toContain('[implement mode](/rules/modes/implement)');
+      expect(result.content).toContain('<a href="/rules/main">main rule</a>');
+      expect(result.content).toContain('<a href="/rules/modes/implement">implement mode</a>');
+    });
+
+    it('should resolve project root links correctly', () => {
+      const linkResolver = new LinkResolver(mockConfig);
+      linkResolver.setDiscoveredFiles(mockFiles);
+
+      const content = 'See <a href=".cursor/rules/main.mdc">main rule</a>';
+      const result = linkResolver.resolveLinks(content, 'test.mdc');
+
+      expect(result.content).toContain('<a href="/rules/main">main rule</a>');
     });
 
     it('should detect cross-references correctly', () => {
@@ -96,7 +106,7 @@ describe('LinkResolver', () => {
       const linkResolver = new LinkResolver(mockConfig);
       linkResolver.setDiscoveredFiles(mockFiles);
 
-      const content = 'External link: [Google](https://google.com) and [relative](./file.txt)';
+      const content = 'External link: <a href="https://google.com">Google</a> and <a href="./file.txt">relative</a>';
       const result = linkResolver.resolveLinks(content, 'test.mdc');
 
       expect(result.content).toBe(content);
@@ -119,6 +129,44 @@ describe('LinkResolver', () => {
       expect(result.crossReferences).toHaveLength(4);
       expect(result.crossReferences.filter(ref => ref.isValid)).toHaveLength(3);
       expect(result.crossReferences.filter(ref => !ref.isValid)).toHaveLength(1);
+    });
+
+    it('should resolve mdc: scheme links correctly', () => {
+      const linkResolver = new LinkResolver(mockConfig);
+      linkResolver.setDiscoveredFiles(mockFiles);
+
+      const content = 'See <a href="mdc:.cursor/rules/modes/implement.mdc">init mode</a> and <a href="mdc:.cursor/rules/adr-structure.mdc">ADR structure</a>.';
+      const result = linkResolver.resolveLinks(content, 'test.mdc');
+
+      expect(result.content).toContain('<a href="/rules/modes/implement">init mode</a>');
+      expect(result.content).toContain('<a href="/rules/adr-structure">ADR structure</a>');
+      expect(result.crossReferences).toHaveLength(2);
+      expect(result.crossReferences[0].original).toBe('mdc:.cursor/rules/modes/implement.mdc');
+      expect(result.crossReferences[0].resolved).toBe('/rules/modes/implement');
+      expect(result.crossReferences[0].isValid).toBe(true);
+    });
+
+    it('should handle mixed link formats correctly', () => {
+      const linkResolver = new LinkResolver(mockConfig);
+      linkResolver.setDiscoveredFiles(mockFiles);
+
+      const content = `
+        Mixed links:
+        - ./main.mdc
+        - mdc:.cursor/rules/modes/implement.mdc
+        - <a href=".cursor/rules/adr-structure.mdc">legacy</a>
+        - <a href="mdc:.cursor/rules/modes/plan.mdc">new format</a>
+      `;
+      const result = linkResolver.resolveLinks(content, 'test.mdc');
+
+      expect(result.crossReferences).toHaveLength(4);
+      expect(result.crossReferences.filter(ref => ref.isValid)).toHaveLength(4);
+      
+      // Check that mdc: links are properly resolved
+      const mdcLinks = result.crossReferences.filter(ref => ref.original.startsWith('mdc:'));
+      expect(mdcLinks).toHaveLength(2);
+      expect(mdcLinks[0].resolved).toBe('/rules/modes/implement');
+      expect(mdcLinks[1].resolved).toBe('/rules/modes/plan');
     });
   });
 

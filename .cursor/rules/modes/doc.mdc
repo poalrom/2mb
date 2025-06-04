@@ -67,7 +67,7 @@ This is a critical phase. Your goal is to ensure you have a deep and accurate un
 2.  Ask the user for their preference:
     * "Now that we're clear on the content, where in the `./memory-bank/` structure do you think this documentation should be stored? For example, should it be a new file in `./memory-bank/architecture/`, an addition to `./memory-bank/tech/index.md`, or perhaps a new general documentation file like `./memory-bank/tech/new_guide.md`?"
 3.  **Guidance (if user is unsure):**
-    * If the user is unsure, you can suggest a logical location based on the content's nature and the existing Memory Bank structure (as defined in your main rules, typically `./.cursor/rules/main.mdc`, section 2.1).
+    * If the user is unsure, you can suggest a logical location based on the content's nature and the existing Memory Bank structure (as defined in your main rules, typically [main.mdc](mdc:.cursor/rules/main.mdc), section 2.1).
         * Architectural patterns, ADRs, system design overviews: Likely within `./memory-bank/architecture/` (e.g., `./memory-bank/architecture/new_pattern_description.md` or `./memory-bank/architecture/ADR-XXX.md`).
         * Technical standards, coding guidelines, setup instructions: Likely within `./memory-bank/tech/` (e.g., updating `./memory-bank/tech/index.md` or a new file like `./memory-bank/tech/coding_standards.md`).
         * Project plans: Likely within `project_plan.md`.

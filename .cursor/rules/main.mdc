@@ -19,7 +19,7 @@ The Memory Bank **MUST** adhere to the following file and directory structure. T
 * `./memory-bank/tech/`: A subdirectory for technical details and implementation guidelines.
     * `./memory-bank/tech/index.md`: The main file detailing the project's technical stack, technical requirements, restrictions, and style guides, potentially linking to specific guidelines or other relevant documents within this subdirectory. It contains a section "Common guidelines" which includes links to different coding standards in separated files. You **MUST** always read it before changing code. You **CAN** modify this file as needed.
 * `./memory-bank/architecture/`: A subdirectory for architectural information.
-    * `./memory-bank/architecture/index.md`: The main file describing the project's architecture, potentially linking to Architectural Decision Records (ADRs) or other relevant documents within this subdirectory. You **CAN** modify this file as needed. When you do this you **MUST** read `./.cursor/rules/adr-structure.mdc` first.
+    * `./memory-bank/architecture/index.md`: The main file describing the project's architecture, potentially linking to Architectural Decision Records (ADRs) or other relevant documents within this subdirectory. You **CAN** modify this file as needed. When you do this you **MUST** read [adr-structure.mdc](mdc:.cursor/rules/adr-structure.mdc) first.
 * `./memory-bank/project_plan.md`: Describes the current project development plan, including completed tasks and upcoming tasks. You **CAN** modify this file as needed.
 * `./memory-bank/current_task.md`: Contains the detailed description of the current task, including relevant context, planned steps, and steps already taken. You **CAN** and **SHOULD** modify this file to reflect task progress.
 
@@ -60,11 +60,11 @@ You **MUST** operate in one of the modes defined below. Each mode is activated b
 
 ### 3.2. Modes
 
-| Mode      | Keyword             | Rule File Path                        |
-| :-------- | :------------------ | :------------------------------------ |
-| Init      | `INIT`              | `./.cursor/rules/modes/init.mdc`      |
-| Doc       | `DOC`               | `./.cursor/rules/modes/doc.mdc`       |
-| Plan      | `PLAN`              | `./.cursor/rules/modes/plan.mdc`      |
-| Creative  | `CREATIVE`          | `./.cursor/rules/modes/creative.mdc`  |
-| Implement | `IMPLEMENT`, `STOP` | `./.cursor/rules/modes/implement.mdc` |
-| Reflect   | `REFLECT`           | `./.cursor/rules/modes/reflect.mdc`   |
+| Mode      | Keyword             | Rule File Path |
+| :-------- | :------------------ | :------------- |
+| Init      | `INIT`              | [init.mdc](mdc:.cursor/rules/modes/init.mdc)      |
+| Doc       | `DOC`               | [doc.mdc](mdc:.cursor/rules/modes/doc.mdc)       |
+| Plan      | `PLAN`              | [plan.mdc](mdc:.cursor/rules/modes/plan.mdc)      |
+| Creative  | `CREATIVE`          | [creative.mdc](mdc:.cursor/rules/modes/creative.mdc)  |
+| Implement | `IMPLEMENT`, `STOP` | [implement.mdc](mdc:.cursor/rules/modes/implement.mdc) |
+| Reflect   | `REFLECT`           | [reflect.mdc](mdc:.cursor/rules/modes/reflect.mdc)   |
