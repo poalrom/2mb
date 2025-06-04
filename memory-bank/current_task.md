@@ -1,72 +1,64 @@
 # Current Task
 
 ## Task Description
-**Implement GitHub Flavored Markdown (GFM) support [L1]**
+**Replace default links with project-specific ones [L1]**
 
-Enhance the existing `processMarkdown` method in `plugins/docusaurus-plugin-mdc-rules/src/content-loader.ts` to add GitHub Flavored Markdown (GFM) support using the already installed `remark-gfm` plugin.
+Update the `docusaurus.config.ts` file to replace all default Docusaurus references and placeholder links with 2MB project-specific ones, ensuring proper navigation and branding throughout the site.
 
 ## Background
-The current plugin implementation uses a basic remark/rehype pipeline for markdown processing but doesn't include GFM features like:
-- Tables
-- Strikethrough text
-- Task lists (checkboxes)
-- Autolinks
-- Footnotes
-
-The `remark-gfm` plugin is already installed as a dependency (version 4.0.1) but not being used in the processing pipeline.
+The current `docusaurus.config.ts` still contains default Docusaurus placeholder values and links that point to Facebook's Docusaurus repository rather than the 2MB project. These need to be updated to provide proper project-specific navigation and links.
 
 ## Requirements
-- **Add GFM Support**: Use the existing `remark-gfm` plugin in the remark processing pipeline
-- **Maintain HTML Output**: Continue generating HTML output for the current `dangerouslySetInnerHTML` approach
-- **Test GFM Features**: Verify that common GFM features (tables, strikethrough, task lists) work correctly
-- **No Breaking Changes**: Ensure all existing functionality remains intact
+- Replace placeholder URL with appropriate project URL
+- Update GitHub organization and project name references
+- Fix all GitHub links to point to the actual 2MB project repository
+- Remove or update default Docusaurus references
+- Ensure all navigation and footer links are project-appropriate
+- Maintain functionality while making links project-specific
 
 ## Technical Context
-- **Location**: `plugins/docusaurus-plugin-mdc-rules/src/content-loader.ts` - `processMarkdown` method (around line 208)
-- **Current State**: Basic remark + remark-rehype + rehype-stringify pipeline without GFM
-- **Available Dependency**: `remark-gfm` v4.0.1 already installed
-- **Integration Point**: Method is called during file processing before content is stored in `RuleContent` objects
-- **Output Format**: HTML string that will be used in `<div dangerouslySetInnerHTML={{ __html: markdownContent }} />`
+- **Location**: `docusaurus.config.ts` - main configuration file
+- **Current Issues**: 
+  - Placeholder URL (`https://your-docusaurus-site.example.com`)
+  - Facebook organization references
+  - GitHub links pointing to Facebook's Docusaurus repo
+  - Default project name references
 
 ## Implementation Steps
 
-### Step 1: Add GFM Plugin to Remark Pipeline
-- [x] **Import remark-gfm plugin**:
-   - Add import statement for `remark-gfm` at the top of the file
-   - Ensure proper TypeScript types are available
+### Step 1: Update Site URLs and Organization
+- [x] **Replace placeholder URL**: Update site URL to appropriate value
+- [x] **Update organization name**: Change from "facebook" to actual organization  
+- [x] **Update project name**: Change from "docusaurus" to "2mb" or appropriate name
+- [x] **Update base URL if needed**: Ensure correct base path for deployment
 
-- [x] **Integrate plugin into processing pipeline**:
-   - Add `.use(remarkGfm)` to the unified processor chain
-   - Position it correctly in the pipeline (after remarkParse, before remarkRehype)
-   - Ensure compatibility with existing remark-rehype processing
+### Step 2: Fix GitHub References
+- [x] **Update navbar GitHub link**: Point to actual 2MB project repository
+- [x] **Update footer GitHub link**: Point to actual 2MB project repository  
+- [x] **Update docs edit URL**: Point to correct repository for edit links
+- [x] **Verify all external links**: Ensure they point to correct resources
 
-### Step 2: Test GFM Features
-- [ ] **Create comprehensive test cases**:
-   - Test markdown tables
-   - Test strikethrough text (`~~text~~`)
-   - Test task lists (`- [x] completed`, `- [ ] incomplete`)
-   - Test autolinks (URLs that are automatically linked)
-   - Verify output generates proper HTML for each feature
-
-### Step 3: Update Documentation
-- [ ] **Update plugin documentation**:
-   - Document that GFM features are now supported
-   - List specific GFM features that are available
-   - Add examples of GFM usage in `.mdc` files
+### Step 3: Update Branding Elements
+- [x] **Update social card reference**: Use appropriate image or remove default reference
+- [x] **Verify copyright text**: Ensure appropriate copyright attribution
+- [x] **Check favicon and logo references**: Confirm they're project-appropriate
 
 ## Expected Outcomes
-- All GitHub Flavored Markdown features work correctly in `.mdc` files
-- Tables, strikethrough, task lists, and autolinks render properly as HTML
-- All existing functionality remains intact
-- Performance impact is minimal (plugin is already installed)
+- All links point to correct 2MB project resources
+- No references to Facebook's Docusaurus repository remain
+- Navigation provides appropriate project-specific links
+- Site configuration reflects actual project details
+- Users can properly navigate to project resources
 
 ## Definition of Done
-- [ ] `processMarkdown` method includes `remark-gfm` plugin in processing pipeline
-- [ ] Test cases verify all major GFM features work correctly
-- [ ] Documentation is updated with GFM capabilities
-- [ ] No regression in existing markdown processing functionality
+- [x] Placeholder URLs replaced with project-specific ones
+- [x] All GitHub links point to 2MB project repository
+- [x] Organization and project names updated appropriately  
+- [x] No default Docusaurus references remain in configuration
+- [x] All navigation and footer links function correctly
+- [x] Edit links point to correct repository
 
 ## Current Status
-**Status**: 🔄 **IN PROGRESS** - Ready to implement GFM support
+**Status**: ✅ **COMPLETED** - All default links have been successfully replaced with 2MB project-specific ones
 
-**Next Action**: Add `remark-gfm` to the processing pipeline in the `processMarkdown` method. 
+**Next Action**: Links configuration is complete. Ready to proceed with next task from project plan. 

@@ -15,15 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://poalrom.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/2mb',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'poalrom', // Usually your GitHub org/user name.
+  projectName: '2mb', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -45,7 +45,7 @@ const config: Config = {
           routeBasePath: '/memory-bank',
           path: './memory-bank',
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/facebook/docusaurus/edit/main/docs/',
+          editUrl: 'https://github.com/poalrom/2mb/edit/main/',
         },
         blog: false,
         theme: {
@@ -77,7 +77,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/2mb-social-card.jpg',
     navbar: {
       title: '2MB',
       logo: {
@@ -96,7 +96,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/poalrom/2mb',
           label: 'GitHub',
           position: 'right',
         },
@@ -106,11 +106,28 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Links',
+          title: 'Documentation',
+          items: [
+            {
+              label: 'Rules',
+              href: '/rules/main',
+            },
+            {
+              label: 'Memory Bank',
+              href: '/memory-bank/project_brief',
+            },
+          ],
+        },
+        {
+          title: 'Community',
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/poalrom/2mb',
+            },
+            {
+              label: 'Issues',
+              href: 'https://github.com/poalrom/2mb/issues',
             },
           ],
         },
