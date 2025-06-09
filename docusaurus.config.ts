@@ -57,7 +57,7 @@ const config: Config = {
 
   plugins: [
     [
-      './plugins/docusaurus-plugin-mdc-rules',
+      'docusaurus-plugin-mdc-rules',
       {
         id: 'docusaurus-plugin-mdc-rules',
         sourceDir: '.cursor/rules',
