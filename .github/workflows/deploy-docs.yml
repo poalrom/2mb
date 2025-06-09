@@ -34,14 +34,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Install plugin dependencies
-        run: npm ci
-        working-directory: ./plugins/docusaurus-plugin-mdc-rules
-        
-      - name: Build plugin
-        run: npm run build
-        working-directory: ./plugins/docusaurus-plugin-mdc-rules
-        
       - name: Build documentation
         run: npm run build
         

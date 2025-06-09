@@ -17,49 +17,24 @@ This project is a **Docusaurus documentation website** built with **TypeScript**
 - **Source Components**: `src/` directory for custom React components
 - **Configuration**: TypeScript-based Docusaurus configuration
 
-## Custom Plugin Development (ADR-002, ADR-003)
-As per [ADR-002](../architecture/ADR-002-build-time-mdc-integration-plugin.md) and [ADR-003](../architecture/ADR-003-docusaurus-content-loader-plugin-implementation.md), this project includes custom Docusaurus plugin development for processing `.mdc` rule files:
+## MDC Rules Plugin Integration (ADR-002, ADR-003)
+As per [ADR-002](../architecture/ADR-002-build-time-mdc-integration-plugin.md) and [ADR-003](../architecture/ADR-003-docusaurus-content-loader-plugin-implementation.md), this project uses a custom Docusaurus plugin for processing `.mdc` rule files:
 
-### Plugin Development Requirements:
+### Plugin Integration:
 - **Plugin Name**: `docusaurus-plugin-mdc-rules`
+- **Status**: **External npm dependency** (moved to separate repository)
 - **Purpose**: Build-time processing of `.mdc` files from `.cursor/rules/` into documentation pages
 - **Architecture**: Custom Docusaurus content plugin with lifecycle hooks integration
 - **Implementation**: Content Loader Plugin with Build Lifecycle Integration (ADR-003)
 
-### Plugin Technical Stack:
-- **Docusaurus Plugin API**: v3.8.0 lifecycle hooks (`loadContent`, `contentLoaded`, `configureWebpack`)
-- **Content Processing**: Custom content parsing and processing logic
-- **Cross-Reference Resolution**: Custom regex-based link conversion logic
-- **Metadata Extraction**: Custom table generation from rule metadata
+### Plugin Functionality:
+- **Content Processing**: Automated parsing and processing of `.mdc` rule files
+- **Cross-Reference Resolution**: Converts internal rule references to documentation links
+- **Metadata Extraction**: Generates organized tables from rule metadata
 - **Navigation Integration**: Automatic sidebar configuration generation
-- **File System Operations**: Node.js `fs` and `path` modules for directory traversal
+- **URL Mapping**: Maps `.cursor/rules/` structure to `/docs/rules/` URLs
 
-### Required Dependencies (ADR-003):
-| Dependency | Purpose | Type |
-|---|---|---|
-| `@types/node` | TypeScript definitions for Node.js APIs | Development |
-
-### Plugin File Structure:
-```
-plugins/docusaurus-plugin-mdc-rules/
-├── src/
-│   ├── index.ts           # Main plugin export
-│   ├── content-loader.ts  # File discovery and parsing
-│   ├── link-resolver.ts   # Cross-reference resolution
-│   ├── sidebar-generator.ts # Navigation generation
-│   └── types.ts          # TypeScript interfaces
-├── package.json
-└── README.md
-```
-
-### Development Guidelines for Plugin:
-1. Follow Docusaurus plugin development best practices and lifecycle patterns
-2. Implement robust error handling for malformed `.mdc` files with detailed diagnostics
-3. Ensure build-time validation of cross-references with warning system
-4. Maintain single source of truth principle (no content duplication)
-5. Include comprehensive unit tests for transformation logic and edge cases
-6. Use TypeScript interfaces for strong typing of plugin configuration and content structures
-7. Implement graceful fallback for missing or inaccessible source files
+**Note**: The plugin was originally developed as custom code within this project but has been extracted to a standalone npm package for reusability across multiple projects.
 
 ## Common Guidelines
 *Links to different coding standards and guidelines will be added here.*
